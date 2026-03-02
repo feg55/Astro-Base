@@ -12,11 +12,16 @@ function SphereMesh(props: ThreeElements['mesh']) {
     if (meshRef.current) meshRef.current.rotation.y += delta
   })
 
+  const { scale } = useSpring({
+    scale: active ? 3 : 1.5,
+    config: { tension: 170, friction: 18 },
+  });
+
   return (
-    <mesh
+    <animated.mesh
       {...props}
       ref={meshRef}
-      scale={active ? 1.5 : 3}
+      scale={scale}
       onClick={(event: ThreeEvent<MouseEvent>) => {
         event.stopPropagation()
         setActive(!active)
@@ -32,7 +37,7 @@ function SphereMesh(props: ThreeElements['mesh']) {
     >
       <sphereGeometry />
       <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
-    </mesh>
+    </animated.mesh>
   )
 }
 
