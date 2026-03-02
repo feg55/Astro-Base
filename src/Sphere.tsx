@@ -1,6 +1,7 @@
 import { Canvas, useFrame, type ThreeElements, type ThreeEvent } from '@react-three/fiber'
 import { useRef, useState } from 'react'
 import type { Mesh } from 'three'
+import { animated, useSpring } from "@react-spring/three";
 
 function SphereMesh(props: ThreeElements['mesh']) {
   const meshRef = useRef<Mesh | null>(null)
