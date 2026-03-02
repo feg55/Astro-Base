@@ -1,7 +1,8 @@
-import { Canvas, useFrame, type ThreeElements, type ThreeEvent } from '@react-three/fiber'
+import { Canvas, useFrame, useLoader, type ThreeElements, type ThreeEvent } from '@react-three/fiber'
 import { useRef, useState } from 'react'
 import type { Mesh } from 'three'
 import { animated, useSpring } from "@react-spring/three";
+import { TextureLoader } from 'three'
 
 function SphereMesh(props: ThreeElements['mesh']) {
   const meshRef = useRef<Mesh | null>(null)
@@ -12,8 +13,10 @@ function SphereMesh(props: ThreeElements['mesh']) {
     if (meshRef.current) meshRef.current.rotation.y += delta
   })
 
+  const texture = useLoader(TextureLoader, '/textures/2k_jupiter.jpg')
+
   const { scale } = useSpring({
-    scale: active ? 3 : 1.5,
+    scale: active ? 3 : hovered ? 1.65 : 1.5,
     config: { tension: 170, friction: 18 },
   });
 
@@ -35,8 +38,9 @@ function SphereMesh(props: ThreeElements['mesh']) {
         setHover(false)
       }}
     >
-      <sphereGeometry />
-      <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
+      <sphereGeometry args={[1, 64, 64]}/>
+      <meshStandardMaterial map={texture} />
+      {/* <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} /> */}
     </animated.mesh>
   )
 }
