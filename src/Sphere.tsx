@@ -1,8 +1,8 @@
-import { Canvas, useFrame, useLoader, type ThreeElements, type ThreeEvent } from '@react-three/fiber'
+import { Canvas, useFrame, type ThreeElements } from '@react-three/fiber'
 import { useRef, useState } from 'react'
 import type { Mesh } from 'three'
-import { animated, useSpring } from "@react-spring/three";
-import { TextureLoader } from 'three'
+import { useSpring } from "@react-spring/three";
+import Jupiter from './planets/Jupiter';
 
 function SphereMesh(props: ThreeElements['mesh']) {
   const meshRef = useRef<Mesh | null>(null)
@@ -13,7 +13,7 @@ function SphereMesh(props: ThreeElements['mesh']) {
     if (meshRef.current) meshRef.current.rotation.y += delta
   })
 
-  const texture = useLoader(TextureLoader, '/textures/2k_jupiter.jpg')
+  // const texture = useLoader(TextureLoader, '/textures/2k_jupiter.jpg')
 
   const { scale } = useSpring({
     scale: active ? 3 : hovered ? 1.65 : 1.5,
@@ -21,33 +21,42 @@ function SphereMesh(props: ThreeElements['mesh']) {
   });
 
   return (
-    <animated.mesh
-      {...props}
-      ref={meshRef}
-      scale={scale}
-      onClick={(event: ThreeEvent<MouseEvent>) => {
-        event.stopPropagation()
-        setActive(!active)
-      }}
-      onPointerOver={(event: ThreeEvent<PointerEvent>) => {
-        event.stopPropagation()
-        setHover(true)
-      }}
-      onPointerOut={(event: ThreeEvent<PointerEvent>) => {
-        event.stopPropagation()
-        setHover(false)
-      }}
-    >
-      <sphereGeometry args={[1, 64, 64]}/>
-      <meshStandardMaterial map={texture} />
-      {/* <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} /> */}
-    </animated.mesh>
+    // <animated.mesh
+    //   {...props}
+    //   ref={meshRef}
+    //   scale={scale}
+    //   onClick={(event: ThreeEvent<MouseEvent>) => {
+    //     event.stopPropagation()
+    //     setActive(!active)
+    //   }}
+    //   onPointerOver={(event: ThreeEvent<PointerEvent>) => {
+    //     event.stopPropagation()
+    //     setHover(true)
+    //   }}
+    //   onPointerOut={(event: ThreeEvent<PointerEvent>) => {
+    //     event.stopPropagation()
+    //     setHover(false)
+    //   }}
+    // >
+    //   <sphereGeometry args={[1, 64, 64]}/>
+    //   <meshStandardMaterial map={texture} />
+    //   {/* <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} /> */}
+    // </animated.mesh>
+    <Jupiter 
+    {...props}
+    scale={scale}
+    meshRef={meshRef}
+    hovered={hovered}
+    active={active}
+    setHover={setHover}
+    setActive={setActive}
+    />
   )
 }
 
 export default function RenderedSphere() {
   return (
-    <Canvas style={{ width: '100%', height: '400px' }}>
+    <Canvas style={{ width: '600px', height: '600px' }}>
       <ambientLight intensity={Math.PI / 2} />
       <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
       <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
