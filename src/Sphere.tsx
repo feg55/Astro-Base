@@ -1,10 +1,50 @@
-import { Canvas, useFrame, type ThreeElements } from '@react-three/fiber'
-import { useRef, useState } from 'react'
+import { useFrame } from '@react-three/fiber'
+import { useEffect, useRef, useState, type JSX } from 'react'
 import type { Mesh } from 'three'
 import { useSpring } from "@react-spring/three";
-import Jupiter from './planets/Jupiter';
+// import Jupiter from './planets/Jupiter';
+import { create } from 'zustand';
+import { Planet } from './planets/planetBase';
+import { useShallow } from 'zustand/shallow';
 
-function SphereMesh(props: ThreeElements['mesh']) {
+type PlanetType = {
+  id: number,
+  name: string,
+  scale: number,
+  args?: [radius?: number | undefined, widthSegments?: number | undefined, heightSegments?: number | undefined, phiStart?: number | undefined, phiLength?: number | undefined, thetaStart?: number | undefined, thetaLength?: number | undefined] | Readonly<[radius?: number | undefined, widthSegments?: number | undefined, heightSegments?: number | undefined, phiStart?: number | undefined, phiLength?: number | undefined, thetaStart?: number | undefined, thetaLength?: number | undefined] | undefined>,
+  texture_path: string
+}
+
+export interface PlanetsStoreI {
+  planets: PlanetType[],
+  setPlanets: (planets: PlanetType[]) => void
+}
+
+export const usePlanetsStore = create<PlanetsStoreI>((set, get) => ({
+  planets: [
+    {
+      id: 5,
+      name: "Jupiter",
+      scale: 1.5,
+      texture_path: '/textures/2k_jupiter.jpg',
+      args: [1, 64, 64]
+    }
+  ],
+  setPlanets: (planets) => {
+    set(state => ({...state, planets: planets}))
+  }
+}))
+
+type UsePlanetProps = {
+  id?: number,
+  name?: string
+}
+
+
+export const usePlanet = (props: UsePlanetProps) => {
+  const [PlanetJSX, setPlanet] = useState<JSX.Element|null>(null);
+  const {planets} = usePlanetsStore(useShallow(state => ({planets: state.planets})))
+
   const meshRef = useRef<Mesh | null>(null)
   const [hovered, setHover] = useState(false)
   const [active, setActive] = useState(false)
@@ -13,54 +53,57 @@ function SphereMesh(props: ThreeElements['mesh']) {
     if (meshRef.current) meshRef.current.rotation.y += delta
   })
 
-  // const texture = useLoader(TextureLoader, '/textures/2k_jupiter.jpg')
-
-  const { scale } = useSpring({
+  const { scale  } = useSpring({
     scale: active ? 3 : hovered ? 1.65 : 1.5,
     config: { tension: 170, friction: 18 },
   });
 
-  return (
-    // <animated.mesh
-    //   {...props}
-    //   ref={meshRef}
-    //   scale={scale}
-    //   onClick={(event: ThreeEvent<MouseEvent>) => {
-    //     event.stopPropagation()
-    //     setActive(!active)
-    //   }}
-    //   onPointerOver={(event: ThreeEvent<PointerEvent>) => {
-    //     event.stopPropagation()
-    //     setHover(true)
-    //   }}
-    //   onPointerOut={(event: ThreeEvent<PointerEvent>) => {
-    //     event.stopPropagation()
-    //     setHover(false)
-    //   }}
-    // >
-    //   <sphereGeometry args={[1, 64, 64]}/>
-    //   <meshStandardMaterial map={texture} />
-    //   {/* <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} /> */}
-    // </animated.mesh>
-    <Jupiter 
-    {...props}
-    scale={scale}
-    meshRef={meshRef}
-    hovered={hovered}
-    active={active}
-    setHover={setHover}
-    setActive={setActive}
-    />
-  )
+
+  useEffect(() => {
+    const _planet = planets.find(el => el.id === props.id)
+    if (_planet) {
+      const planet = <Planet 
+                        texture_path={_planet?.texture_path}
+                        scale={scale}
+                        meshRef={meshRef}
+                        hovered={hovered}
+                        active={active}
+                        setHover={setHover}
+                        setActive={setActive}/>
+                        setPlanet(planet)
+    }
+  }, [props.id])
+
+  return PlanetJSX
 }
 
-export default function RenderedSphere() {
-  return (
-    <Canvas style={{ width: '600px', height: '600px' }}>
-      <ambientLight intensity={Math.PI / 2} />
-      <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} decay={0} intensity={Math.PI} />
-      <pointLight position={[-10, -10, -10]} decay={0} intensity={Math.PI} />
-      <SphereMesh position={[0, 0, 0]} />
-    </Canvas>
-  )
-}
+
+// export function SphereMesh(props: ThreeElements['mesh']) {
+//   const meshRef = useRef<Mesh | null>(null)
+//   const [hovered, setHover] = useState(false)
+//   const [active, setActive] = useState(false)
+
+//   useFrame((_state, delta: number) => {
+//     if (meshRef.current) meshRef.current.rotation.y += delta
+//   })
+
+//   const { scale } = useSpring({
+//     scale: active ? 3 : hovered ? 1.65 : 1.5,
+//     config: { tension: 170, friction: 18 },
+//   });
+//   if(planetId === 5){
+//     return (
+//       <Jupiter 
+//       {...props}
+//       scale={scale}
+//       meshRef={meshRef}
+//       hovered={hovered}
+//       active={active}
+//       setHover={setHover}
+//       setActive={setActive}
+//       />
+//    )
+//   }
+// }
+
+

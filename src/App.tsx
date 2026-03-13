@@ -1,11 +1,12 @@
 import './App.css'
-import RenderedSphere from './Sphere'
+import RenderCvans from './RenderCvans'
+
 
 function App() {
   return (
     <main>
       <h1>Astro Base</h1>
-      <RenderedSphere />
+      <RenderCvans />
     </main>
   )
 }
