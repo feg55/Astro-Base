@@ -6,7 +6,8 @@ import { DoubleSide, TextureLoader, type Mesh } from "three";
 
 export type PlanetBaseProps = {
     texture_path: string,
-    hasRing: boolean
+    hasRing: boolean,
+    isStar: boolean,
     position?: [number, number, number]
     meshRef: RefObject<Mesh | null>;
     ringRef?: RefObject<Mesh | null>;
@@ -15,9 +16,10 @@ export type PlanetBaseProps = {
     hovered: boolean;
     setActive: Dispatch<SetStateAction<boolean>>;
     setHover: Dispatch<SetStateAction<boolean>>;
+    onSelect?: () => void
 }
 
-export const Planet = ({texture_path, hasRing, position, meshRef, ringRef, scale, setActive, setHover}: PlanetBaseProps) => {
+export const Planet = ({texture_path, hasRing, isStar, position, meshRef, ringRef, scale, setHover, onSelect}: PlanetBaseProps) => {
     const texture = useLoader(TextureLoader, texture_path)
     const ringTexture = useLoader(TextureLoader, '/textures/2k_saturn_ring_alpha.png')
     if(hasRing) {
@@ -29,7 +31,7 @@ export const Planet = ({texture_path, hasRing, position, meshRef, ringRef, scale
                     scale={scale}
                     onClick={(event: ThreeEvent<MouseEvent>) => {
                         event.stopPropagation()
-                        setActive(prev => !prev)
+                        onSelect?.()
                     }}
                     onPointerOver={(event: ThreeEvent<PointerEvent>) => {
                         event.stopPropagation()
@@ -41,7 +43,7 @@ export const Planet = ({texture_path, hasRing, position, meshRef, ringRef, scale
                     }}
                     >
                     <sphereGeometry args={[1, 64, 64]}/>
-                    <meshStandardMaterial map={texture} />
+                    <meshStandardMaterial map={texture}/>
                 </animated.mesh>
                 <animated.mesh
                 rotation={[-Math.PI / 2.8, 0, 0]}
@@ -50,20 +52,58 @@ export const Planet = ({texture_path, hasRing, position, meshRef, ringRef, scale
                 ref={ringRef}
                 >
                     <ringGeometry args={[1.2, 1.8, 64]}/>
-                    <meshStandardMaterial transparent={true} side={DoubleSide} map={ringTexture} />
+                    <meshBasicMaterial
+                    transparent={true}
+                    side={DoubleSide}
+                    map={ringTexture}
+                    opacity={0.95}
+                    depthWrite={false}
+                    />
                 </animated.mesh>
             </>
         )
     }
-
-    return (<>
+    if(isStar) {
+    return (
+    <>
         <animated.mesh
             ref={meshRef}
             position={position}
             scale={scale}
             onClick={(event: ThreeEvent<MouseEvent>) => {
                 event.stopPropagation()
-                setActive(prev => !prev)
+                onSelect?.()
+            }}
+            onPointerOver={(event: ThreeEvent<PointerEvent>) => {
+                event.stopPropagation()
+                setHover(true)
+            }}
+            onPointerOut={(event: ThreeEvent<PointerEvent>) => {
+                event.stopPropagation()
+                setHover(false)
+            }}
+            >
+            <sphereGeometry args={[1, 64, 64]}/>
+            <meshStandardMaterial 
+            map={texture} 
+            emissive={'#ffffff'}
+            emissiveMap={texture}
+            emissiveIntensity={0.8}
+            toneMapped={false}
+            />
+        </animated.mesh>
+    </>
+    )
+    }
+    return (
+    <>
+        <animated.mesh
+            ref={meshRef}
+            position={position}
+            scale={scale}
+            onClick={(event: ThreeEvent<MouseEvent>) => {
+                event.stopPropagation()
+                onSelect?.()
             }}
             onPointerOver={(event: ThreeEvent<PointerEvent>) => {
                 event.stopPropagation()
@@ -77,7 +117,6 @@ export const Planet = ({texture_path, hasRing, position, meshRef, ringRef, scale
             <sphereGeometry args={[1, 64, 64]}/>
             <meshStandardMaterial map={texture} />
         </animated.mesh>
-
-        </>
+    </>
     )
 }

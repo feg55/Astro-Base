@@ -5,8 +5,8 @@ import RenderCvans from './RenderCvans'
 function App() {
   return (
     <main>
-      <h1>Astro Base</h1>
       <RenderCvans />
+      <h1>Astro Base</h1>
     </main>
   )
 }
