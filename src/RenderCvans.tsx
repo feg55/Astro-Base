@@ -6,12 +6,16 @@ import { planetMeshById } from './planets/runtimeState.ts'
 
 // const positione = [0, 20, 1] as const
 type CamPosT = [number, number, number]
-const START_POS: CamPosT = [0, 20, 1]
-const CAMERA_DISTANCE_SCALE = 0.7
+const START_POS: CamPosT = [0, 45, 1]
+const CAMERA_DISTANCE_SCALE = 1.2
+const CAMERA_FOV = 40
+const CAMERA_NEAR = 0.01
+const CAMERA_FAR = 2000
+
 function SimpleCamera({ targetId }: { targetId: number | null }) {
   const { camera } = useThree()
   const planets = usePlanetsStore((state) => state.planets)
-
+  
   useFrame(() => {
     const k = 0.08
 
@@ -24,6 +28,7 @@ function SimpleCamera({ targetId }: { targetId: number | null }) {
       camera.lookAt(0, 0, 0)
       return
     }
+    
     const targetMesh = planetMeshById.get(targetId)
     if (!targetMesh) return
 
@@ -31,11 +36,26 @@ function SimpleCamera({ targetId }: { targetId: number | null }) {
     const followDistance = Math.max(0.8, planetScale * 2.2) * CAMERA_DISTANCE_SCALE
     const upDistance = Math.max(0.4, planetScale * 0.9) * CAMERA_DISTANCE_SCALE
     const { x, y, z } = targetMesh.position
-    
-    const nx = camera.position.x + (x + followDistance - camera.position.x) * k
-    const ny = camera.position.y + (y + upDistance - camera.position.y) * k
-    const nz = camera.position.z + (z + followDistance - camera.position.z) * k
-    camera.position.set(nx, ny, nz)
+    const desiredDistance = Math.hypot(followDistance, upDistance, followDistance)
+
+    let ox = camera.position.x - x
+    let oy = camera.position.y - y
+    let oz = camera.position.z - z
+    const currentDistance = Math.hypot(ox, oy, oz)
+
+    if (currentDistance > 1e-6) {
+      const ratio = desiredDistance / currentDistance
+      ox *= ratio
+      oy *= ratio
+      oz *= ratio
+    } else {
+      ox = followDistance
+      oy = upDistance
+      oz = followDistance
+    }
+
+    // Keep exact radius to the selected planet so distance doesn't "breathe".
+    camera.position.set(x + ox, y + oy, z + oz)
     camera.lookAt(x, y, z)
   })
 
@@ -78,7 +98,15 @@ export default function RenderCvans() {
   }
 
   return (
-    <Canvas camera={{position: START_POS}} style={{ position: 'relative', inset: 0, width: '100vw', height: '100vh'}}>
+    <Canvas
+      camera={{
+        position: START_POS,
+        fov: CAMERA_FOV,
+        near: CAMERA_NEAR,
+        far: CAMERA_FAR,
+      }}
+      style={{ position: 'relative', inset: 0, width: '100vw', height: '100vh' }}
+    >
       {/* <ambientLight intensity={Math.PI / 20} /> */}
       <SimpleCamera targetId={selectedPlanetId} />
       {/* <spotLight position={[0, 20, 0]} angle={0.25} penumbra={1} decay={0} intensity={Math.PI * 0.1} /> */}

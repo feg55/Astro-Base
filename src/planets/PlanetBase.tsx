@@ -1,7 +1,7 @@
 import { animated, SpringValue } from "@react-spring/three"
-import { useLoader, type ThreeEvent } from "@react-three/fiber"
-import type { Dispatch, RefObject, SetStateAction } from "react";
-import { DoubleSide, TextureLoader, type Mesh } from "three";
+import { useLoader, useThree, type ThreeEvent } from "@react-three/fiber"
+import { useEffect, type Dispatch, type RefObject, type SetStateAction } from "react";
+import { DoubleSide, SRGBColorSpace, TextureLoader, type Mesh } from "three";
 
 
 export type PlanetBaseProps = {
@@ -20,8 +20,22 @@ export type PlanetBaseProps = {
 }
 
 export const Planet = ({texture_path, hasRing, isStar, position, meshRef, ringRef, scale, setHover, onSelect}: PlanetBaseProps) => {
+    const { gl } = useThree()
     const texture = useLoader(TextureLoader, texture_path)
     const ringTexture = useLoader(TextureLoader, '/textures/2k_saturn_ring_alpha.png')
+
+    useEffect(() => {
+        const maxAnisotropy = Math.max(1, gl.capabilities.getMaxAnisotropy())
+
+        texture.colorSpace = SRGBColorSpace
+        texture.anisotropy = maxAnisotropy
+        texture.needsUpdate = true
+
+        ringTexture.colorSpace = SRGBColorSpace
+        ringTexture.anisotropy = maxAnisotropy
+        ringTexture.needsUpdate = true
+    }, [gl, texture, ringTexture])
+
     const handleClick = (event: ThreeEvent<MouseEvent>) => {
         event.stopPropagation()
         onSelect?.()
@@ -47,7 +61,7 @@ export const Planet = ({texture_path, hasRing, isStar, position, meshRef, ringRe
                 onPointerOver={handlePointerOver}
                 onPointerOut={handlePointerOut}
             >
-                <sphereGeometry args={[1, 64, 64]}/>
+                <sphereGeometry args={[1, 128, 96]}/>
                 {isStar ? (
                     <meshStandardMaterial 
                         map={texture} 
