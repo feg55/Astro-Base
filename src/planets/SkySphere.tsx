@@ -6,7 +6,7 @@ const SkySphere = () => {
 
     return(
     <mesh>
-      <sphereGeometry args={[100, 64, 64]} />
+      <sphereGeometry args={[1000, 16, 16]} />
       <meshBasicMaterial
         map={stars}
         side={BackSide}
