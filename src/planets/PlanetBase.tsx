@@ -22,101 +22,62 @@ export type PlanetBaseProps = {
 export const Planet = ({texture_path, hasRing, isStar, position, meshRef, ringRef, scale, setHover, onSelect}: PlanetBaseProps) => {
     const texture = useLoader(TextureLoader, texture_path)
     const ringTexture = useLoader(TextureLoader, '/textures/2k_saturn_ring_alpha.png')
-    if(hasRing) {
-        return(
-            <>
-                <animated.mesh
-                    ref={meshRef}
-                    position={position}
-                    scale={scale}
-                    onClick={(event: ThreeEvent<MouseEvent>) => {
-                        event.stopPropagation()
-                        onSelect?.()
-                    }}
-                    onPointerOver={(event: ThreeEvent<PointerEvent>) => {
-                        event.stopPropagation()
-                        setHover(true)
-                    }}
-                    onPointerOut={(event: ThreeEvent<PointerEvent>) => {
-                        event.stopPropagation()
-                        setHover(false)
-                    }}
-                    >
-                    <sphereGeometry args={[1, 64, 64]}/>
-                    <meshStandardMaterial map={texture}/>
-                </animated.mesh>
-                <animated.mesh
-                rotation={[-Math.PI / 2.8, 0, 0]}
+    const handleClick = (event: ThreeEvent<MouseEvent>) => {
+        event.stopPropagation()
+        onSelect?.()
+    }
+
+    const handlePointerOver = (event: ThreeEvent<PointerEvent>) => {
+        event.stopPropagation()
+        setHover(true)
+    }
+
+    const handlePointerOut = (event: ThreeEvent<PointerEvent>) => {
+        event.stopPropagation()
+        setHover(false)
+    }
+
+    return (
+        <>
+            <animated.mesh
+                ref={meshRef}
                 position={position}
                 scale={scale}
-                ref={ringRef}
+                onClick={handleClick}
+                onPointerOver={handlePointerOver}
+                onPointerOut={handlePointerOut}
+            >
+                <sphereGeometry args={[1, 64, 64]}/>
+                {isStar ? (
+                    <meshStandardMaterial 
+                        map={texture} 
+                        emissive={'#ffffff'}
+                        emissiveMap={texture}
+                        emissiveIntensity={0.8}
+                        toneMapped={false}
+                    />
+                ) : (
+                    <meshStandardMaterial map={texture} />
+                )}
+            </animated.mesh>
+
+            {hasRing && (
+                <animated.mesh
+                    rotation={[-Math.PI / 2.8, 0, 0]}
+                    position={position}
+                    scale={scale}
+                    ref={ringRef}
                 >
                     <ringGeometry args={[1.2, 1.8, 64]}/>
                     <meshBasicMaterial
-                    transparent={true}
-                    side={DoubleSide}
-                    map={ringTexture}
-                    opacity={0.95}
-                    depthWrite={false}
+                        transparent={true}
+                        side={DoubleSide}
+                        map={ringTexture}
+                        opacity={0.95}
+                        depthWrite={false}
                     />
                 </animated.mesh>
-            </>
-        )
-    }
-    if(isStar) {
-    return (
-    <>
-        <animated.mesh
-            ref={meshRef}
-            position={position}
-            scale={scale}
-            onClick={(event: ThreeEvent<MouseEvent>) => {
-                event.stopPropagation()
-                onSelect?.()
-            }}
-            onPointerOver={(event: ThreeEvent<PointerEvent>) => {
-                event.stopPropagation()
-                setHover(true)
-            }}
-            onPointerOut={(event: ThreeEvent<PointerEvent>) => {
-                event.stopPropagation()
-                setHover(false)
-            }}
-            >
-            <sphereGeometry args={[1, 64, 64]}/>
-            <meshStandardMaterial 
-            map={texture} 
-            emissive={'#ffffff'}
-            emissiveMap={texture}
-            emissiveIntensity={0.8}
-            toneMapped={false}
-            />
-        </animated.mesh>
-    </>
-    )
-    }
-    return (
-    <>
-        <animated.mesh
-            ref={meshRef}
-            position={position}
-            scale={scale}
-            onClick={(event: ThreeEvent<MouseEvent>) => {
-                event.stopPropagation()
-                onSelect?.()
-            }}
-            onPointerOver={(event: ThreeEvent<PointerEvent>) => {
-                event.stopPropagation()
-                setHover(true)
-            }}
-            onPointerOut={(event: ThreeEvent<PointerEvent>) => {
-                event.stopPropagation()
-                setHover(false)
-            }}
-            >
-            <sphereGeometry args={[1, 64, 64]}/>
-            <meshStandardMaterial map={texture} />
-        </animated.mesh>
-    </>
+            )}
+        </>
     )
 }
