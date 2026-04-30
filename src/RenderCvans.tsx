@@ -37,6 +37,17 @@ function SimpleCamera({ targetId }: { targetId: number | null }) {
     const { x, y, z } = targetMesh.position
     const desiredDistance = Math.hypot(followDistance, upDistance, followDistance)
 
+    if (targetId === 0) {
+      const sideDistance = Math.max(4.8, planetScale * 2.8) * CAMERA_DISTANCE_SCALE
+      const planeHeight = Math.max(0.35, planetScale * 0.45) * CAMERA_DISTANCE_SCALE
+      const nx = camera.position.x + (x + sideDistance - camera.position.x) * k
+      const ny = camera.position.y + (y + planeHeight - camera.position.y) * k
+      const nz = camera.position.z + (z + sideDistance - camera.position.z) * k
+      camera.position.set(nx, ny, nz)
+      camera.lookAt(x, y, z)
+      return
+    }
+
     let ox = camera.position.x - x
     let oy = camera.position.y - y
     let oz = camera.position.z - z
