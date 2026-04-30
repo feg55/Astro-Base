@@ -1,49 +1,481 @@
 #root {
-  max-width: 100%;
-  margin: 0;
-  padding: 0;
-  text-align: center;
   min-height: 100vh;
+}
+
+.appShell {
+  min-height: 100vh;
+  background: #000;
+  color: #e7e9ea;
+  font-family: "Segoe UI", "Trebuchet MS", Tahoma, sans-serif;
+}
+
+.canvasStage {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 100vh;
+  border-bottom: 1px solid #2f3336;
 }
 
 canvas {
   width: 100%;
   height: 100%;
+  display: block;
   touch-action: pan-y;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.astroBaseSection {
+  max-width: 1320px;
+  margin: 0 auto;
+  padding: 1.15rem clamp(0.75rem, 2.7vw, 2rem) 3rem;
+  text-align: left;
 }
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
+.astroBaseTop {
+  border: 1px solid #2f3336;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #0f1419 0%, #000 100%);
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+
+.astroBaseTop h1 {
+  margin: 0.4rem 0 0.65rem;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  line-height: 1.15;
+}
+
+.astroBaseLabel {
+  margin: 0;
+  display: inline-block;
+  padding: 0.32rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #1d9bf0;
+  background: rgba(29, 155, 240, 0.15);
+  border: 1px solid rgba(29, 155, 240, 0.45);
+}
+
+.astroBaseDescription {
+  margin: 0;
+  max-width: 800px;
+  color: #8b98a5;
+  line-height: 1.45;
+}
+
+.astroBaseLayout {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 1rem;
+  align-items: start;
+}
+
+.astroFeedColumn {
+  min-width: 0;
+  border: 1px solid #2f3336;
+  border-radius: 18px;
+  background: #000;
+  overflow: hidden;
+}
+
+.filterBar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 0.95rem;
+  font-size: 0.88rem;
+  color: #8b98a5;
+  border-bottom: 1px solid #2f3336;
+  background: rgba(15, 20, 25, 0.84);
+}
+
+.filterBar strong {
+  color: #e7e9ea;
+}
+
+.clearFilterButton {
+  border: 1px solid #536471;
+  background: rgba(22, 24, 28, 0.95);
+  color: #e7e9ea;
+  padding: 0.42rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+}
+
+.clearFilterButton:hover {
+  border-color: #1d9bf0;
+  background: rgba(29, 155, 240, 0.1);
+}
+
+.shotsGrid {
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.shotCard {
+  overflow: hidden;
+  border-radius: 18px;
+  background: #16181c;
+  border: 1px solid #2f3336;
+  transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.shotCard:hover {
+  transform: translateY(-2px);
+  border-color: #1d9bf0;
+  background: #1a1f26;
+}
+
+.shotCardButton {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.shotImage {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.24s ease;
+}
+
+.shotCardButton:hover .shotImage {
+  transform: scale(1.03);
+}
+
+.shotInfo {
+  padding: 0.8rem 0.78rem 0.9rem;
+}
+
+.shotInfoMini {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.shotMiniLine {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+
+.shotMiniLine span {
+  color: #8b98a5;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.shotMiniLine strong {
+  color: #e7e9ea;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.25;
+  text-align: right;
+}
+
+.shotInfo h2 {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+.shotObject {
+  margin: 0 0 0.35rem;
+  color: #1d9bf0;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.shotMeta {
+  margin: 0.44rem 0 0;
+  color: #8b98a5;
+  font-size: 0.86rem;
+}
+
+.emptyState {
+  margin: 0 1rem 1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  border: 1px dashed #536471;
+  color: #8b98a5;
+  background: rgba(15, 20, 25, 0.8);
+}
+
+.shotModalBackdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.78);
+}
+
+.shotModal {
+  width: min(1080px, 100%);
+  max-height: 92vh;
+  overflow: auto;
+  border-radius: 18px;
+  border: 1px solid #2f3336;
+  background: #0f1419;
+  display: grid;
+  grid-template-columns: minmax(0, 62%) minmax(280px, 1fr);
+}
+
+.shotModalClose {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  flex: 0 0 30px;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 1px solid #536471;
+  background: #16181c;
+  color: #e7e9ea;
+  padding: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1;
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  text-align: center;
+}
+
+.shotModalClose:hover {
+  border-color: #1d9bf0;
+}
+
+.shotModalMedia {
+  border-right: 1px solid #2f3336;
+}
+
+.shotModalImage {
+  width: 100%;
+  height: 100%;
+  max-height: 72vh;
+  object-fit: cover;
+  display: block;
+}
+
+.shotModalInfo {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.shotObjectRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.shotObjectRow .shotObject {
+  margin: 0;
+}
+
+.shotModalInfo h3 {
+  margin: 0;
+  font-size: 1.22rem;
+  line-height: 1.25;
+}
+
+.shotModalSpecs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.4rem;
+}
+
+.shotModalSpecs p {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.shotModalSpecs span {
+  color: #8b98a5;
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.shotModalSpecs strong {
+  color: #e7e9ea;
+  font-size: 0.92rem;
+  line-height: 1.25;
+}
+
+.shotModalDescription {
+  margin: 0.2rem 0 0;
+  color: #d7dbde;
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+.filtersSidebar {
+  position: sticky;
+  top: 0.75rem;
+  border: 1px solid #2f3336;
+  border-radius: 18px;
+  padding: 1rem;
+  background: #16181c;
+}
+
+.filtersSidebar h2 {
+  margin: 0 0 0.8rem;
+  font-size: 1.08rem;
+}
+
+.searchField {
+  display: block;
+  margin-bottom: 0.9rem;
+}
+
+.searchField span {
+  display: block;
+  font-size: 0.84rem;
+  color: #8b98a5;
+  margin-bottom: 0.38rem;
+}
+
+.searchInput {
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 999px;
+  border: 1px solid #2f3336;
+  background: #0f1419;
+  color: #e7e9ea;
+  padding: 0.56rem 0.78rem;
+}
+
+.searchInput:focus {
+  border-color: #1d9bf0;
+  outline: none;
+}
+
+.searchInput::placeholder {
+  color: #536471;
+}
+
+.objectMenu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.filterCheck {
+  display: flex;
+  align-items: center;
+  gap: 0.52rem;
+  font-size: 0.92rem;
+  color: #e7e9ea;
+}
+
+.filterCheck input {
+  accent-color: #1d9bf0;
+}
+
+.filterFolder {
+  border: 1px solid #2f3336;
+  border-radius: 12px;
+  padding: 0.55rem 0.6rem;
+  background: #0f1419;
+}
+
+.folderHeader {
+  font-weight: 700;
+}
+
+.folderChildren {
+  margin-top: 0.55rem;
+  margin-left: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.resetSidebarButton {
+  margin-top: 1rem;
+  width: 100%;
+  border-radius: 999px;
+  border: 1px solid #536471;
+  background: #0f1419;
+  color: #e7e9ea;
+  padding: 0.55rem 0.7rem;
+}
+
+.resetSidebarButton:hover {
+  border-color: #1d9bf0;
+}
+
+.resetSidebarButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 1200px) {
+  .shotsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  to {
-    transform: rotate(360deg);
+
+  .shotModal {
+    grid-template-columns: minmax(0, 58%) minmax(240px, 1fr);
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+@media (max-width: 980px) {
+  .astroBaseLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .filtersSidebar {
+    position: static;
+    order: -1;
   }
 }
 
-.card {
-  padding: 2em;
+@media (max-width: 760px) {
+  .shotModal {
+    grid-template-columns: 1fr;
+  }
+
+  .shotModalMedia {
+    border-right: 0;
+    border-bottom: 1px solid #2f3336;
+  }
+
+  .shotModalInfo {
+    border-top: 0;
+  }
+
+  .shotModalImage {
+    max-height: 46vh;
+  }
 }
 
-.read-the-docs {
-  color: #888;
+@media (max-width: 640px) {
+  .shotsGrid {
+    grid-template-columns: 1fr;
+    padding: 0.8rem;
+  }
+
+  .filterBar {
+    padding: 0.7rem 0.8rem;
+  }
 }

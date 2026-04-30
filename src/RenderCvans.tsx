@@ -1,7 +1,6 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { usePlanet, usePlanetsStore } from './Sphere.tsx'
 import SkySphere from './planets/SkySphere.tsx'
-import { useState } from 'react'
 import { planetMeshById } from './planets/runtimeState.ts'
 
 // const positione = [0, 20, 1] as const
@@ -88,14 +87,12 @@ const CustomPlanets = ({ onSelectPlanet, selectedPlanetId }: { onSelectPlanet: (
   )
 }
 
+type RenderCvansProps = {
+  selectedPlanetId: number | null
+  onSelectPlanet: (planetId: number) => void
+}
 
-
-export default function RenderCvans() {
-  const [selectedPlanetId, setSelectedPlanetId] = useState<number | null>(null)
-
-  const handleSelectPlanet = (planetId: number) => {
-    setSelectedPlanetId((prev) => (prev === planetId ? null : planetId))
-  }
+export default function RenderCvans({ selectedPlanetId, onSelectPlanet }: RenderCvansProps) {
 
   return (
     <Canvas
@@ -105,14 +102,14 @@ export default function RenderCvans() {
         near: CAMERA_NEAR,
         far: CAMERA_FAR,
       }}
-      style={{ position: 'relative', inset: 0, width: '100vw', height: '100vh' }}
+      style={{ position: 'relative', inset: 0, width: '100%', height: '100%' }}
     >
       {/* <ambientLight intensity={Math.PI / 20} /> */}
       <SimpleCamera targetId={selectedPlanetId} />
       {/* <spotLight position={[0, 20, 0]} angle={0.25} penumbra={1} decay={0} intensity={Math.PI * 0.1} /> */}
       <pointLight position={[0, 0, 0]} decay={0} intensity={Math.PI} />
       <SkySphere />
-      <CustomPlanets onSelectPlanet={handleSelectPlanet} selectedPlanetId={selectedPlanetId}/>
+      <CustomPlanets onSelectPlanet={onSelectPlanet} selectedPlanetId={selectedPlanetId}/>
       {/* <SphereMesh position={[0, 0, 0]} /> */}
     </Canvas>
   )
