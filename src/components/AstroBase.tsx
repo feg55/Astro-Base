@@ -4,18 +4,23 @@ import { FiltersSidebar } from './FiltersSidebar'
 import { ShotCard } from './ShotCard'
 import { ShotModal } from './ShotModal'
 import styles from './AstroBase.module.css'
-import type { AstroShot } from './types'
+import type { AstroShot, CelestialObject, ObjectFilterOption } from './types'
 
 type AstroBaseProps = {
+  apiError: string | null
   checkedObjectIds: number[]
   checkedObjectsSet: ReadonlySet<number>
+  filterOptions: ObjectFilterOption[]
   filteredShots: AstroShot[]
   hasActiveFilters: boolean
+  isLoadingShots: boolean
+  objects: CelestialObject[]
   openedShot: AstroShot | null
   searchQuery: string
   selectedObjectName: string
   selectedPlanetId: number | null
   onCloseShot: () => void
+  onShotCreated: (shot: AstroShot) => void
   onOpenShot: (shotId: number) => void
   onResetFilters: () => void
   onSearchQueryChange: (query: string) => void
@@ -24,15 +29,20 @@ type AstroBaseProps = {
 }
 
 export function AstroBase({
+  apiError,
   checkedObjectIds,
   checkedObjectsSet,
+  filterOptions,
   filteredShots,
   hasActiveFilters,
+  isLoadingShots,
+  objects,
   openedShot,
   searchQuery,
   selectedObjectName,
   selectedPlanetId,
   onCloseShot,
+  onShotCreated,
   onOpenShot,
   onResetFilters,
   onSearchQueryChange,
@@ -50,7 +60,7 @@ export function AstroBase({
           </p>
         </div>
 
-        <AuthPanel />
+        <AuthPanel objects={objects} onShotCreated={onShotCreated} />
       </div>
 
       <div className={styles.astroBaseLayout}>
@@ -62,6 +72,9 @@ export function AstroBase({
             shotsCount={filteredShots.length}
             onResetFilters={onResetFilters}
           />
+
+          {apiError && <p className={styles.statusMessage}>{apiError}</p>}
+          {isLoadingShots && <p className={styles.statusMessage}>Загружаем снимки...</p>}
 
           <div className={styles.shotsGrid}>
             {filteredShots.map((shot) => (
@@ -78,6 +91,7 @@ export function AstroBase({
 
         <FiltersSidebar
           checkedObjectsSet={checkedObjectsSet}
+          filterOptions={filterOptions}
           hasActiveFilters={hasActiveFilters}
           searchQuery={searchQuery}
           onSearchQueryChange={onSearchQueryChange}

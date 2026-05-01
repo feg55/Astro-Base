@@ -7,6 +7,14 @@ const EARTH_NORMAL_MAP_PATH = '/textures/2k_earth_normal_map.png'
 const EARTH_SPECULAR_MAP_PATH = '/textures/2k_earth_specular_map.jpg'
 const EARTH_CLOUDS_MAP_PATH = '/textures/2k_earth_clouds.jpg'
 
+function configureTexture(texture: Texture, maxAnisotropy: number, colorSpace?: Texture['colorSpace']) {
+    if (colorSpace) {
+        texture.colorSpace = colorSpace
+    }
+
+    texture.anisotropy = maxAnisotropy
+    texture.needsUpdate = true
+}
 
 export type PlanetBaseProps = {
     texture_path: string,
@@ -31,11 +39,8 @@ const EarthMaterial = ({ texture }: { texture: Texture }) => {
     useEffect(() => {
         const maxAnisotropy = Math.max(1, gl.capabilities.getMaxAnisotropy())
 
-        normalMap.anisotropy = maxAnisotropy
-        normalMap.needsUpdate = true
-
-        specularMap.anisotropy = maxAnisotropy
-        specularMap.needsUpdate = true
+        configureTexture(normalMap, maxAnisotropy)
+        configureTexture(specularMap, maxAnisotropy)
     }, [gl, normalMap, specularMap])
 
     return (
@@ -57,9 +62,7 @@ const EarthClouds = () => {
     useEffect(() => {
         const maxAnisotropy = Math.max(1, gl.capabilities.getMaxAnisotropy())
 
-        cloudTexture.colorSpace = SRGBColorSpace
-        cloudTexture.anisotropy = maxAnisotropy
-        cloudTexture.needsUpdate = true
+        configureTexture(cloudTexture, maxAnisotropy, SRGBColorSpace)
     }, [gl, cloudTexture])
 
     useFrame((_state, delta) => {
@@ -91,13 +94,8 @@ export const Planet = ({texture_path, hasRing, isStar, position, meshRef, ringRe
     useEffect(() => {
         const maxAnisotropy = Math.max(1, gl.capabilities.getMaxAnisotropy())
 
-        texture.colorSpace = SRGBColorSpace
-        texture.anisotropy = maxAnisotropy
-        texture.needsUpdate = true
-
-        ringTexture.colorSpace = SRGBColorSpace
-        ringTexture.anisotropy = maxAnisotropy
-        ringTexture.needsUpdate = true
+        configureTexture(texture, maxAnisotropy, SRGBColorSpace)
+        configureTexture(ringTexture, maxAnisotropy, SRGBColorSpace)
     }, [gl, texture, ringTexture])
 
     const handleClick = (event: ThreeEvent<MouseEvent>) => {

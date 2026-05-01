@@ -1,0 +1,33 @@
+[project]
+name = "astro-base-api"
+version = "0.1.0"
+description = "FastAPI backend for Astro Base"
+requires-python = ">=3.11"
+dependencies = [
+    "alembic>=1.13,<2",
+    "asyncpg>=0.29,<1",
+    "bcrypt>=4.0,<4.1",
+    "email-validator>=2.1,<3",
+    "fastapi>=0.115,<1",
+    "passlib[bcrypt]>=1.7,<2",
+    "pydantic-settings>=2.4,<3",
+    "python-multipart>=0.0.9,<1",
+    "python-jose[cryptography]>=3.3,<4",
+    "SQLAlchemy[asyncio]>=2.0,<3",
+    "uvicorn[standard]>=0.30,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "httpx>=0.27,<1",
+    "pytest>=8.0,<9",
+    "pytest-asyncio>=0.23,<1",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]

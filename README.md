@@ -71,3 +71,34 @@ export default defineConfig([
   },
 ])
 ```
+
+## Backend
+
+Backend лежит в `apps/api` и использует FastAPI, PostgreSQL, SQLAlchemy 2.x и Alembic.
+
+```powershell
+docker compose up -d postgres
+
+cd apps/api
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -e ".[dev]"
+Copy-Item .env.example .env
+
+alembic upgrade head
+python -m app.seed
+python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+Frontend по умолчанию обращается к `http://127.0.0.1:8000`. При необходимости можно переопределить адрес через `VITE_API_URL`.
+
+PostgreSQL из Docker проброшен на `localhost:5433`, чтобы не конфликтовать с локальной PostgreSQL на стандартном порту `5432`.
+
+### Локальный админ
+
+После `python -m app.seed` создаётся dev-администратор:
+
+- email: `admin@astrobase.local`
+- пароль: `astro-admin-password`
+
+Админ-панель доступна на `/admin`. В ней можно искать пользователей, выдавать и снимать роль администратора, создавать новых пользователей/админов, удалять пользователей и очищать таблицу фото.

@@ -1,8 +1,9 @@
-import { FILTER_OPTIONS } from './astroData'
 import styles from './AstroBase.module.css'
+import type { ObjectFilterOption } from './types'
 
 type FiltersSidebarProps = {
   checkedObjectsSet: ReadonlySet<number>
+  filterOptions: ObjectFilterOption[]
   hasActiveFilters: boolean
   searchQuery: string
   onSearchQueryChange: (query: string) => void
@@ -13,6 +14,7 @@ type FiltersSidebarProps = {
 
 export function FiltersSidebar({
   checkedObjectsSet,
+  filterOptions,
   hasActiveFilters,
   searchQuery,
   onSearchQueryChange,
@@ -36,7 +38,7 @@ export function FiltersSidebar({
       </label>
 
       <div className={styles.objectMenu}>
-        {FILTER_OPTIONS.map((option) => {
+        {filterOptions.map((option) => {
           if (option.type === 'single') {
             return (
               <label className={styles.filterCheck} key={option.id}>

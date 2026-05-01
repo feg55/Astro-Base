@@ -8,6 +8,8 @@ type ShotCardProps = {
 }
 
 export function ShotCard({ shot, onOpen }: ShotCardProps) {
+  const objectName = shot.objectName ?? getObjectName(shot.objectId)
+
   return (
     <article className={styles.shotCard}>
       <button type="button" className={styles.shotCardButton} onClick={() => onOpen(shot.id)}>
@@ -15,7 +17,7 @@ export function ShotCard({ shot, onOpen }: ShotCardProps) {
 
         <div className={styles.shotInfo}>
           <div>
-            <p className={styles.shotObject}>{getObjectName(shot.objectId)}</p>
+            <p className={styles.shotObject}>{objectName}</p>
             <h2>{shot.title}</h2>
             <p className={styles.shotMeta}>{shot.author}</p>
           </div>

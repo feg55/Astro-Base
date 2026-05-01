@@ -1,6 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useFrame } from '@react-three/fiber'
-import { useEffect, useRef, useState, type JSX } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Mesh } from 'three'
 import { useSpring } from "@react-spring/three";
 import { create } from 'zustand';
@@ -119,7 +119,6 @@ type UsePlanetProps = {
 }
 
 export const usePlanet = (props: UsePlanetProps) => {
-  const [PlanetJSX, setPlanet] = useState<JSX.Element|null>(null);
   const {planets} = usePlanetsStore(useShallow(state => ({planets: state.planets})))
   const meshRef = useRef<Mesh | null>(null)
   const ringRef = useRef<Mesh | null>(null)
@@ -179,28 +178,26 @@ export const usePlanet = (props: UsePlanetProps) => {
     }
   }, [props.id])
 
-  useEffect(() => {
-    const _planet = planets.find(el => el.id === props.id)
-    if (_planet) {
-      const planet = <Planet 
-                        texture_path={_planet?.texture_path}
-                        position={_planet.position}
-                        scale={scale}
-                        meshRef={meshRef}
-                        ringRef={ringRef}
-                        hovered={hovered}
-                        active={active}
-                        setHover={setHover}
-                        setActive={setActive}
-                        onSelect={handleSelect}
-                        hasRing={_planet.hasRing ?? false}
-                        isStar={_planet.isStar ?? false}
-                      />
-    setPlanet(planet)
-    }
-  }, [props.id])
+  if (!planet) {
+    return null
+  }
 
-  return PlanetJSX
+  return (
+    <Planet
+      texture_path={planet.texture_path}
+      position={planet.position}
+      scale={scale}
+      meshRef={meshRef}
+      ringRef={ringRef}
+      hovered={hovered}
+      active={active}
+      setHover={setHover}
+      setActive={setActive}
+      onSelect={handleSelect}
+      hasRing={planet.hasRing ?? false}
+      isStar={planet.isStar ?? false}
+    />
+  )
 }
 
 

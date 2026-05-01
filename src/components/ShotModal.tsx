@@ -8,6 +8,8 @@ type ShotModalProps = {
 }
 
 export function ShotModal({ shot, onClose }: ShotModalProps) {
+  const objectName = shot.objectName ?? getObjectName(shot.objectId)
+
   return (
     <div className={styles.shotModalBackdrop} role="presentation" onClick={onClose}>
       <div
@@ -23,7 +25,7 @@ export function ShotModal({ shot, onClose }: ShotModalProps) {
 
         <div className={styles.shotModalInfo}>
           <div className={styles.shotObjectRow}>
-            <p className={styles.shotObject}>{getObjectName(shot.objectId)}</p>
+            <p className={styles.shotObject}>{objectName}</p>
             <button
               type="button"
               className={styles.shotModalClose}

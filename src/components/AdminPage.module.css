@@ -1,0 +1,438 @@
+.adminShell {
+  min-height: 100vh;
+  padding: 1rem clamp(0.75rem, 2vw, 1.5rem) 2rem;
+  background: #0b0f14;
+  color: #e8edf2;
+  font-family: "Segoe UI", "Trebuchet MS", Tahoma, sans-serif;
+}
+
+.adminTopBar,
+.centerPanel,
+.loginPanel,
+.usersPanel,
+.actionPanel,
+.dangerPanel,
+.metric {
+  border: 1px solid #2a333d;
+  border-radius: 8px;
+  background: #10161d;
+}
+
+.adminTopBar {
+  width: min(1320px, 100%);
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.adminTopBar h1,
+.centerPanel h1,
+.loginPanel h1,
+.panelHeader h2,
+.actionPanel h2,
+.dangerPanel h2 {
+  margin: 0.2rem 0 0;
+  color: #f2f5f8;
+  line-height: 1.2;
+}
+
+.adminTopBar h1 {
+  font-size: 1.45rem;
+}
+
+.panelLabel {
+  margin: 0;
+  color: #68a7e8;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.adminAccount,
+.inlineActions,
+.filtersRow,
+.rowActions,
+.dangerStats {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  flex-wrap: wrap;
+}
+
+.adminAccount span {
+  color: #a5b0bc;
+  font-size: 0.9rem;
+}
+
+.centerPanel,
+.loginPanel {
+  width: min(440px, 100%);
+  margin: 12vh auto 0;
+  padding: 1rem;
+}
+
+.loginForm,
+.sideForm {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.metricsGrid {
+  width: min(1320px, 100%);
+  margin: 1rem auto 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.metric {
+  padding: 0.85rem;
+}
+
+.metric span {
+  display: block;
+  color: #a5b0bc;
+  font-size: 0.82rem;
+}
+
+.metric strong {
+  display: block;
+  margin-top: 0.22rem;
+  color: #f2f5f8;
+  font-size: 1.3rem;
+  line-height: 1.2;
+}
+
+.feedbackStrip {
+  width: min(1320px, 100%);
+  margin: 1rem auto 0;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.noticeMessage,
+.errorMessage,
+.emptyState {
+  margin: 0;
+  padding: 0.68rem 0.78rem;
+  border-radius: 6px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
+.noticeMessage {
+  border: 1px solid #315f43;
+  color: #d8ffe5;
+  background: #132319;
+}
+
+.errorMessage {
+  border: 1px solid #5d3440;
+  color: #ffd7df;
+  background: #25161b;
+}
+
+.emptyState {
+  border: 1px dashed #52606d;
+  color: #a5b0bc;
+  background: #151c24;
+}
+
+.adminLayout {
+  width: min(1320px, 100%);
+  margin: 1rem auto 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+  gap: 1rem;
+  align-items: start;
+}
+
+.usersPanel {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.panelHeader {
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 520px);
+  gap: 1rem;
+  align-items: end;
+  border-bottom: 1px solid #28313a;
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.field span {
+  color: #a5b0bc;
+  font-size: 0.84rem;
+}
+
+.field input,
+.field select,
+.searchInput,
+.selectInput {
+  width: 100%;
+  min-height: 40px;
+  border: 1px solid #303a45;
+  border-radius: 6px;
+  background: #151c24;
+  color: #e8edf2;
+  padding: 0.55rem 0.68rem;
+  outline: none;
+}
+
+.field input:focus,
+.field select:focus,
+.searchInput:focus,
+.selectInput:focus {
+  border-color: #58a6ff;
+  box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.16);
+}
+
+.searchInput {
+  min-width: 220px;
+}
+
+.selectInput {
+  width: 150px;
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.usersTable {
+  width: 100%;
+  min-width: 860px;
+  border-collapse: collapse;
+}
+
+.usersTable th,
+.usersTable td {
+  padding: 0.78rem 0.9rem;
+  border-bottom: 1px solid #28313a;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.usersTable th {
+  color: #8b949e;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.usersTable td {
+  color: #d4dae0;
+  font-size: 0.9rem;
+}
+
+.usersTable td strong,
+.usersTable td span {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.usersTable td strong {
+  color: #f2f5f8;
+}
+
+.usersTable td span {
+  color: #9ca8b4;
+  font-size: 0.82rem;
+}
+
+.roleBadge {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.55rem;
+  border: 1px solid #3d4650;
+  border-radius: 999px;
+  color: #d4dae0;
+  background: #1b232c;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.roleBadgeAdmin {
+  border-color: #3f6f54;
+  color: #d8ffe5;
+  background: #16261b;
+}
+
+.rowActions {
+  gap: 0.45rem;
+}
+
+.inlineCheck {
+  display: inline-flex;
+  min-height: 34px;
+  align-items: center;
+  gap: 0.34rem;
+  color: #a5b0bc;
+  font-size: 0.82rem;
+}
+
+.inlineCheck input {
+  width: 15px;
+  height: 15px;
+  accent-color: #2f81f7;
+}
+
+.primaryButton,
+.secondaryButton,
+.dangerButton {
+  min-height: 36px;
+  border-radius: 6px;
+  border: 1px solid #303a45;
+  padding: 0 0.75rem;
+  color: #e8edf2;
+  background: #1f2730;
+  cursor: pointer;
+}
+
+.primaryButton {
+  border-color: #2f81f7;
+  background: #2f6fcb;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.dangerButton {
+  border-color: #8b3945;
+  background: #3a1a20;
+  color: #ffd7df;
+  font-weight: 700;
+}
+
+.primaryButton:hover {
+  border-color: #58a6ff;
+  background: #2f81f7;
+}
+
+.secondaryButton:hover {
+  border-color: #8995a2;
+  background: #27313c;
+}
+
+.dangerButton:hover {
+  border-color: #ff7b8a;
+  background: #4a2028;
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled,
+.dangerButton:disabled {
+  opacity: 0.52;
+  cursor: not-allowed;
+}
+
+.secondaryLink {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #303a45;
+  border-radius: 6px;
+  padding: 0 0.75rem;
+  color: #e8edf2;
+  background: #1f2730;
+  text-decoration: none;
+}
+
+.secondaryLink:hover {
+  border-color: #8995a2;
+  background: #27313c;
+}
+
+.paginationBar {
+  padding: 0.85rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  color: #a5b0bc;
+  border-top: 1px solid #28313a;
+}
+
+.sidePanel {
+  display: grid;
+  gap: 1rem;
+}
+
+.actionPanel,
+.dangerPanel {
+  padding: 1rem;
+}
+
+.dangerPanel {
+  border-color: #56313a;
+}
+
+.dangerStats {
+  margin: 0.85rem 0;
+  color: #a5b0bc;
+  font-size: 0.86rem;
+}
+
+.dangerPanel .dangerButton {
+  width: 100%;
+  margin-top: 0.75rem;
+}
+
+@media (max-width: 1060px) {
+  .adminLayout,
+  .panelHeader {
+    grid-template-columns: 1fr;
+  }
+
+  .metricsGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .sidePanel {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .adminTopBar,
+  .paginationBar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .adminAccount,
+  .inlineActions,
+  .filtersRow {
+    width: 100%;
+  }
+
+  .adminAccount > *,
+  .inlineActions > *,
+  .filtersRow > * {
+    flex: 1 1 auto;
+  }
+
+  .metricsGrid,
+  .sidePanel {
+    grid-template-columns: 1fr;
+  }
+
+  .searchInput,
+  .selectInput {
+    width: 100%;
+    min-width: 0;
+  }
+}

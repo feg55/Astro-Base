@@ -64,6 +64,14 @@
   background: #151c24;
 }
 
+.accountHeader {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 34px;
+  gap: 0.6rem;
+  align-items: start;
+}
+
 .accountIdentity {
   min-width: 0;
 }
@@ -92,6 +100,29 @@
   font-size: 0.84rem;
 }
 
+.addShotButton {
+  width: 34px;
+  min-height: 34px;
+  border: 1px solid #303a45;
+  border-radius: 6px;
+  background: #1f2730;
+  color: #f2f5f8;
+  font-size: 1.25rem;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.addShotButton:hover {
+  border-color: #58a6ff;
+  background: #263647;
+}
+
+.addShotButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .primaryButton,
 .secondaryButton,
 .clearFilterButton,
@@ -117,6 +148,12 @@
   background: #2f81f7;
 }
 
+.primaryButton:disabled,
+.secondaryButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .secondaryButton:hover,
 .clearFilterButton:hover,
 .resetSidebarButton:hover,
@@ -132,6 +169,7 @@
   padding: 0;
   font: inherit;
   cursor: pointer;
+  text-decoration: none;
 }
 
 .textButton:hover {
@@ -221,6 +259,18 @@
   gap: 0.8rem;
 }
 
+.formError,
+.statusMessage {
+  margin: 0;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #5d3440;
+  border-radius: 6px;
+  color: #ffd7df;
+  background: #25161b;
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+
 .field,
 .searchField {
   display: grid;
@@ -233,7 +283,57 @@
   font-size: 0.84rem;
 }
 
+.fieldHint {
+  color: #8b949e;
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.dropZone {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.9rem;
+  border: 1px dashed #52606d;
+  border-radius: 8px;
+  background: #151c24;
+  color: #d4dae0;
+  cursor: pointer;
+}
+
+.dropZone:hover,
+.dropZoneActive {
+  border-color: #58a6ff;
+  background: #182130;
+}
+
+.dropZone span {
+  color: #a5b0bc;
+  font-size: 0.84rem;
+}
+
+.dropZone strong {
+  color: #f2f5f8;
+  font-size: 0.95rem;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+
+.dropZone small {
+  color: #8b949e;
+  font-size: 0.78rem;
+}
+
+.fileInput {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .field input,
+.field select,
+.field textarea,
 .searchInput {
   width: 100%;
   min-height: 40px;
@@ -245,13 +345,22 @@
   outline: none;
 }
 
+.field textarea {
+  min-height: 98px;
+  resize: vertical;
+  line-height: 1.45;
+}
+
 .field input:focus,
+.field select:focus,
+.field textarea:focus,
 .searchInput:focus {
   border-color: #58a6ff;
   box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.16);
 }
 
 .field input::placeholder,
+.field textarea::placeholder,
 .searchInput::placeholder {
   color: #6e7681;
 }
@@ -290,6 +399,10 @@
 
 .filterBar strong {
   color: #f2f5f8;
+}
+
+.statusMessage {
+  margin: 1rem 1rem 0;
 }
 
 .clearFilterButton {
