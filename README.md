@@ -1,80 +1,41 @@
-# React + TypeScript + Vite
+# Astro Base
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Astro Base - веб-приложение для просмотра и публикации астрофотографий.
 
-Currently, two official plugins are available:
+В проекте есть интерактивная 3D-сцена Солнечной системы, лента снимков, фильтры по небесным объектам, авторизация, загрузка фото и отдельная админ-панель.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Возможности
 
-## React Compiler
+- 3D-визуализация планет и выбор объекта прямо со сцены.
+- Лента астрофото с поиском и фильтрами по объектам.
+- Регистрация, вход и локальное хранение JWT-токена.
+- Загрузка снимков с описанием, телескопом, камерой, координатами и локацией.
+- FastAPI backend с PostgreSQL, миграциями Alembic и seed-данными.
+- Админ-панель на `/admin`: пользователи, роли, статистика и очистка фото.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Стек
 
-## Expanding the ESLint configuration
+- Frontend: React, TypeScript, Vite, Three.js, React Three Fiber.
+- Backend: FastAPI, SQLAlchemy 2.x, Alembic, PostgreSQL.
+- Инфраструктура: Docker Compose для локальной PostgreSQL.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Запуск frontend
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```powershell
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Frontend откроется на `http://localhost:5173`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+По умолчанию он обращается к API на `http://127.0.0.1:8000`. Если нужен другой адрес:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```powershell
+$env:VITE_API_URL="http://127.0.0.1:8000"
+npm run dev
 ```
 
-## Backend
-
-Backend лежит в `apps/api` и использует FastAPI, PostgreSQL, SQLAlchemy 2.x и Alembic.
+## Запуск backend
 
 ```powershell
 docker compose up -d postgres
@@ -90,15 +51,43 @@ python -m app.seed
 python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-Frontend по умолчанию обращается к `http://127.0.0.1:8000`. При необходимости можно переопределить адрес через `VITE_API_URL`.
+PostgreSQL из Docker доступна на `localhost:5433`.
 
-PostgreSQL из Docker проброшен на `localhost:5433`, чтобы не конфликтовать с локальной PostgreSQL на стандартном порту `5432`.
+## Локальные аккаунты
 
-### Локальный админ
+После `python -m app.seed` создаются тестовые пользователи:
 
-После `python -m app.seed` создаётся dev-администратор:
+| Роль | Email | Пароль |
+| --- | --- | --- |
+| Админ | `admin@astrobase.local` | `astro-admin-password` |
+| Пользователь | `demo@astrobase.local` | `astro-demo-password` |
 
-- email: `admin@astrobase.local`
-- пароль: `astro-admin-password`
+Админ-панель доступна по адресу `http://localhost:5173/admin`.
 
-Админ-панель доступна на `/admin`. В ней можно искать пользователей, выдавать и снимать роль администратора, создавать новых пользователей/админов, удалять пользователей и очищать таблицу фото.
+## Команды
+
+```powershell
+npm run dev      # frontend dev server
+npm run build    # production build
+npm run lint     # ESLint
+npm run preview  # preview production build
+```
+
+Для backend команды выполняются из `apps/api`:
+
+```powershell
+alembic upgrade head
+python -m app.seed
+python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+## Структура
+
+```text
+src/              React frontend и 3D-сцена
+src/components/   лента, фильтры, авторизация, админка
+src/planets/      компоненты небесных объектов
+textures/         текстуры планет и звездного фона
+apps/api/         FastAPI backend
+docker-compose.yml PostgreSQL для локальной разработки
+```
