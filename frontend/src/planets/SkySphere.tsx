@@ -7,6 +7,7 @@ import {
   type Scene,
   type Texture,
 } from "three";
+import { withBasePath } from "../lib/config";
 
 function configureStarsBackground(scene: Scene, stars: Texture, maxAnisotropy: number) {
       stars.colorSpace = SRGBColorSpace
@@ -24,7 +25,7 @@ function configureStarsBackground(scene: Scene, stars: Texture, maxAnisotropy: n
 
 const SkySphere = () => {
     const { gl, scene } = useThree()
-    const stars = useLoader(TextureLoader, '/textures/8k_stars_milky_way.jpg')
+    const stars = useLoader(TextureLoader, withBasePath('textures/8k_stars_milky_way.jpg'))
 
     useEffect(() => {
       return configureStarsBackground(scene, stars, Math.max(1, gl.capabilities.getMaxAnisotropy()))

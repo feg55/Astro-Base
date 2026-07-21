@@ -16,6 +16,7 @@ import {
   type AdminUserList,
   type AdminUserRole,
 } from '../lib/api'
+import { withBasePath } from '../lib/config'
 import styles from './AdminPage.module.css'
 import type { UserProfile } from './types'
 
@@ -364,7 +365,7 @@ export default function AdminPage() {
               {isLoggingIn ? 'Входим...' : 'Войти'}
             </button>
           </form>
-          <a className={styles.secondaryLink} href="/">
+          <a className={styles.secondaryLink} href={withBasePath('')}>
             Вернуться к ленте
           </a>
         </section>
@@ -379,7 +380,7 @@ export default function AdminPage() {
           <p className={styles.panelLabel}>Доступ закрыт</p>
           <h1>{viewer?.displayName ?? 'Пользователь'} не администратор</h1>
           <div className={styles.inlineActions}>
-            <a className={styles.secondaryLink} href="/">
+            <a className={styles.secondaryLink} href={withBasePath('')}>
               Лента
             </a>
             <button className={styles.secondaryButton} type="button" onClick={signOut}>
@@ -400,7 +401,7 @@ export default function AdminPage() {
         </div>
         <div className={styles.adminAccount}>
           <span>{viewer?.displayName}</span>
-          <a className={styles.secondaryLink} href="/">
+          <a className={styles.secondaryLink} href={withBasePath('')}>
             Лента
           </a>
           <button className={styles.secondaryButton} type="button" onClick={signOut}>

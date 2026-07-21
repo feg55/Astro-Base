@@ -6,12 +6,14 @@ import { useSpring } from "@react-spring/three";
 import { create } from 'zustand';
 import { Planet } from './planets/PlanetBase.tsx';
 import { useShallow } from 'zustand/shallow';
+import { withBasePath } from './lib/config.ts';
 import { planetMeshById } from './planets/runtimeState.ts';
 
 const NOOP_RAYCAST: Mesh['raycast'] = () => {}
 
 const ORBIT_SCALE = 0.9
 const orbitPosition = (x: number, y = 0, z = 0): [number, number, number] => [x * ORBIT_SCALE, y, z * ORBIT_SCALE]
+const texturePath = (fileName: string) => withBasePath(`textures/${fileName}`)
 
 type PlanetType = {
   id: number,
@@ -35,7 +37,7 @@ export const usePlanetsStore = create<PlanetsStoreI>((set) => ({
       id: 0,
       name: "Sun",
       scale: 1.8,
-      texture_path: '/textures/2k_sun.jpg',
+      texture_path: texturePath('2k_sun.jpg'),
       args: [1, 64, 64],
       position: orbitPosition(0, 0, 0),
       isStar: true
@@ -44,7 +46,7 @@ export const usePlanetsStore = create<PlanetsStoreI>((set) => ({
       id: 1,
       name: "Mercury",
       scale: 0.3,
-      texture_path: '/textures/2k_mercury.jpg',
+      texture_path: texturePath('2k_mercury.jpg'),
       args: [1, 64, 64],
       position: orbitPosition(4, 0, 0),
     },
@@ -52,7 +54,7 @@ export const usePlanetsStore = create<PlanetsStoreI>((set) => ({
       id: 2,
       name: "Venus",
       scale: 0.5,
-      texture_path: '/textures/2k_venus_atmosphere.jpg',
+      texture_path: texturePath('2k_venus_atmosphere.jpg'),
       args: [1, 64, 64],
       position: orbitPosition(6, 0, 0),
     },
@@ -60,7 +62,7 @@ export const usePlanetsStore = create<PlanetsStoreI>((set) => ({
       id: 3,
       name: "Earth",
       scale: 0.5,
-      texture_path: '/textures/2k_earth_daymap.jpg',
+      texture_path: texturePath('2k_earth_daymap.jpg'),
       args: [1, 64, 64],
       position: orbitPosition(8, 0, 0),
     },
@@ -68,7 +70,7 @@ export const usePlanetsStore = create<PlanetsStoreI>((set) => ({
       id: 4,
       name: "Mars",
       scale: 0.4,
-      texture_path: '/textures/2k_mars.jpg',
+      texture_path: texturePath('2k_mars.jpg'),
       args: [1, 64, 64],
       position: orbitPosition(10, 0, 0),
     },
@@ -76,7 +78,7 @@ export const usePlanetsStore = create<PlanetsStoreI>((set) => ({
       id: 5,
       name: "Jupiter",
       scale: 1,
-      texture_path: '/textures/2k_jupiter.jpg',
+      texture_path: texturePath('2k_jupiter.jpg'),
       args: [1, 64, 64],
       position: orbitPosition(12, 0, 0),
     },
@@ -84,7 +86,7 @@ export const usePlanetsStore = create<PlanetsStoreI>((set) => ({
       id: 6,
       name: "Saturn",
       scale: 0.9,
-      texture_path: '/textures/2k_saturn.jpg',
+      texture_path: texturePath('2k_saturn.jpg'),
       args: [1, 64, 64],
       position: orbitPosition(16, 0, 0),
       hasRing: true,
@@ -93,7 +95,7 @@ export const usePlanetsStore = create<PlanetsStoreI>((set) => ({
       id: 7,
       name: "Uranus",
       scale: 0.6,
-      texture_path: '/textures/2k_uranus.jpg',
+      texture_path: texturePath('2k_uranus.jpg'),
       args: [1, 64, 64],
       position: orbitPosition(19.5, 0, 0),
     },
@@ -101,7 +103,7 @@ export const usePlanetsStore = create<PlanetsStoreI>((set) => ({
       id: 8,
       name: "Neptune",
       scale: 0.6,
-      texture_path: '/textures/2k_neptune.jpg',
+      texture_path: texturePath('2k_neptune.jpg'),
       args: [1, 64, 64],
       position: orbitPosition(21, 0, 0),
     },

@@ -12,6 +12,7 @@ import {
 } from './components/astroData'
 import type { AstroShot, CelestialObject, ObjectFilterOption } from './components/types'
 import { fetchObjects, fetchShots } from './lib/api'
+import { getAppPathname, IS_DEMO_MODE } from './lib/config'
 import RenderCvans from './RenderCvans'
 
 const AdminPage = lazy(() => import('./components/AdminPage'))
@@ -74,9 +75,9 @@ function MainApp() {
   const [searchQuery, setSearchQuery] = useState('')
   const [openedShotId, setOpenedShotId] = useState<number | null>(null)
   const [objects, setObjects] = useState<CelestialObject[]>([])
-  const [filteredShots, setFilteredShots] = useState<AstroShot[]>([])
+  const [apiShots, setApiShots] = useState<AstroShot[]>([])
   const [apiError, setApiError] = useState<string | null>(null)
-  const [isLoadingShots, setIsLoadingShots] = useState(true)
+  const [isLoadingApiShots, setIsLoadingApiShots] = useState(true)
   const [shotsRevision, setShotsRevision] = useState(0)
 
   const checkedObjectsSet = useMemo(() => new Set(checkedObjectIds), [checkedObjectIds])
@@ -90,12 +91,23 @@ function MainApp() {
     objects.forEach((object) => names.set(object.id, object.name))
     return names
   }, [objects])
+  const filteredShots = useMemo(
+    () => IS_DEMO_MODE
+      ? filterLocalShots(checkedObjectIds, normalizedSearch)
+      : apiShots,
+    [apiShots, checkedObjectIds, normalizedSearch],
+  )
+  const isLoadingShots = !IS_DEMO_MODE && isLoadingApiShots
   const openedShot = useMemo(
     () => filteredShots.find((shot) => shot.id === openedShotId) ?? null,
     [filteredShots, openedShotId]
   )
 
   useEffect(() => {
+    if (IS_DEMO_MODE) {
+      return
+    }
+
     const controller = new AbortController()
 
     fetchObjects(controller.signal)
@@ -110,10 +122,14 @@ function MainApp() {
   }, [])
 
   useEffect(() => {
+    if (IS_DEMO_MODE) {
+      return
+    }
+
     const controller = new AbortController()
     const loadingTimer = window.setTimeout(() => {
       if (!controller.signal.aborted) {
-        setIsLoadingShots(true)
+        setIsLoadingApiShots(true)
       }
     }, 120)
 
@@ -123,12 +139,12 @@ function MainApp() {
       signal: controller.signal,
     })
       .then(({ items }) => {
-        setFilteredShots(items)
+        setApiShots(items)
         setApiError(null)
       })
       .catch(() => {
         if (!controller.signal.aborted) {
-          setFilteredShots(filterLocalShots(checkedObjectIds, normalizedSearch))
+          setApiShots(filterLocalShots(checkedObjectIds, normalizedSearch))
           setApiError('API недоступен, показаны локальные демо-данные.')
         }
       })
@@ -136,7 +152,7 @@ function MainApp() {
         window.clearTimeout(loadingTimer)
 
         if (!controller.signal.aborted) {
-          setIsLoadingShots(false)
+          setIsLoadingApiShots(false)
         }
       })
 
@@ -245,6 +261,7 @@ function MainApp() {
         filterOptions={filterOptions}
         filteredShots={filteredShots}
         hasActiveFilters={hasActiveFilters}
+        isDemoMode={IS_DEMO_MODE}
         isLoadingShots={isLoadingShots}
         objects={objects}
         openedShot={openedShot}
@@ -264,7 +281,7 @@ function MainApp() {
 }
 
 function App() {
-  if (window.location.pathname === '/admin') {
+  if (!IS_DEMO_MODE && getAppPathname() === '/admin') {
     return (
       <Suspense fallback={<main className={styles.adminFallback}>Загружаем админ-панель...</main>}>
         <AdminPage />

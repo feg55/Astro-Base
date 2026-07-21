@@ -1,93 +1,96 @@
 # Astro Base
 
-Astro Base - веб-приложение для просмотра и публикации астрофотографий.
+Astro Base — приложение с интерактивной 3D-сценой Солнечной системы и лентой астрофотографий.
 
-В проекте есть интерактивная 3D-сцена Солнечной системы, лента снимков, фильтры по небесным объектам, авторизация, загрузка фото и отдельная админ-панель.
+## Структура
 
-## Возможности
+```text
+frontend/                 React, TypeScript, Vite и статические текстуры
+backend/                  FastAPI, SQLAlchemy и Alembic
+docker-compose.yml        PostgreSQL для локальной разработки
+.github/workflows/        публикация frontend на GitHub Pages
+```
 
-- 3D-визуализация планет и выбор объекта прямо со сцены.
-- Лента астрофото с поиском и фильтрами по объектам.
-- Регистрация, вход и локальное хранение JWT-токена.
-- Загрузка снимков с описанием, телескопом, камерой, координатами и локацией.
-- FastAPI backend с PostgreSQL, миграциями Alembic и seed-данными.
-- Админ-панель на `/admin`: пользователи, роли, статистика и очистка фото.
-
-## Стек
-
-- Frontend: React, TypeScript, Vite, Three.js, React Three Fiber.
-- Backend: FastAPI, SQLAlchemy 2.x, Alembic, PostgreSQL.
-- Инфраструктура: Docker Compose для локальной PostgreSQL.
-
-## Запуск frontend
+## Frontend
 
 ```powershell
-npm install
+cd frontend
+npm ci
 npm run dev
 ```
 
-Frontend откроется на `http://localhost:5173`.
+Приложение откроется на `http://localhost:5173` и по умолчанию будет обращаться к API на `http://127.0.0.1:8000`.
 
-По умолчанию он обращается к API на `http://127.0.0.1:8000`. Если нужен другой адрес:
+Для запуска без backend, с локальными демо-данными:
 
 ```powershell
-$env:VITE_API_URL="http://127.0.0.1:8000"
+$env:VITE_DEMO_MODE="true"
 npm run dev
 ```
 
-## Запуск backend
+Другой адрес API можно передать через `VITE_API_URL`:
+
+```powershell
+$env:VITE_API_URL="https://api.example.com"
+npm run dev
+```
+
+Проверки frontend:
+
+```powershell
+npm run lint
+npm run build
+npm run preview
+```
+
+## Backend
+
+PostgreSQL запускается из корня проекта:
 
 ```powershell
 docker compose up -d postgres
+```
 
-cd apps/api
+Затем запустите API:
+
+```powershell
+cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install -e ".[dev]"
 Copy-Item .env.example .env
-
 alembic upgrade head
 python -m app.seed
 python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-PostgreSQL из Docker доступна на `localhost:5433`.
+PostgreSQL доступен на `localhost:5433`, API — на `http://127.0.0.1:8000`.
 
-## Локальные аккаунты
-
-После `python -m app.seed` создаются тестовые пользователи:
+После `python -m app.seed` создаются тестовые аккаунты:
 
 | Роль | Email | Пароль |
 | --- | --- | --- |
 | Админ | `admin@astrobase.local` | `astro-admin-password` |
 | Пользователь | `demo@astrobase.local` | `astro-demo-password` |
 
-Админ-панель доступна по адресу `http://localhost:5173/admin`.
+## Демо на GitHub Pages
 
-## Команды
+Workflow [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml) уже собирает содержимое `frontend/` и публикует его при push в `main`.
 
-```powershell
-npm run dev      # frontend dev server
-npm run build    # production build
-npm run lint     # ESLint
-npm run preview  # preview production build
-```
+На бесплатном аккаунте репозиторий должен быть публичным, чтобы использовать GitHub Pages.
 
-Для backend команды выполняются из `apps/api`:
+1. Откройте репозиторий → `Settings` → `Pages`.
+2. В `Build and deployment` выберите `Source: GitHub Actions`.
+3. Закоммитьте изменения и отправьте их в GitHub.
+4. Дождитесь завершения workflow `Deploy frontend to GitHub Pages` во вкладке `Actions`.
 
-```powershell
-alembic upgrade head
-python -m app.seed
-python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
-```
+Адрес демо: `https://feg55.github.io/Astro-Base/`.
 
-## Структура
+Без дополнительных настроек Pages запускается в статическом demo mode: лента, поиск, фильтры и 3D-сцена работают на локальных данных; авторизация, загрузка фото и админка отключены.
 
-```text
-src/              React frontend и 3D-сцена
-src/components/   лента, фильтры, авторизация, админка
-src/planets/      компоненты небесных объектов
-textures/         текстуры планет и звездного фона
-apps/api/         FastAPI backend
-docker-compose.yml PostgreSQL для локальной разработки
-```
+GitHub Pages не запускает FastAPI и PostgreSQL. Для полноценного режима разместите backend отдельно по HTTPS, затем:
+
+1. В GitHub откройте `Settings` → `Secrets and variables` → `Actions` → `Variables`.
+2. Создайте repository variable `VITE_API_URL` с публичным HTTPS-адресом API.
+3. Добавьте `https://feg55.github.io` в `CORS_ORIGINS` backend.
+4. Перезапустите workflow Pages.

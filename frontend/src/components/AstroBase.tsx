@@ -13,6 +13,7 @@ type AstroBaseProps = {
   filterOptions: ObjectFilterOption[]
   filteredShots: AstroShot[]
   hasActiveFilters: boolean
+  isDemoMode: boolean
   isLoadingShots: boolean
   objects: CelestialObject[]
   openedShot: AstroShot | null
@@ -35,6 +36,7 @@ export function AstroBase({
   filterOptions,
   filteredShots,
   hasActiveFilters,
+  isDemoMode,
   isLoadingShots,
   objects,
   openedShot,
@@ -60,7 +62,16 @@ export function AstroBase({
           </p>
         </div>
 
-        <AuthPanel objects={objects} onShotCreated={onShotCreated} />
+        {isDemoMode ? (
+          <section className={styles.accountPanel} aria-label="Режим приложения">
+            <div className={styles.accountIdentity}>
+              <strong>Демо-режим</strong>
+              <span>Статическая версия без backend</span>
+            </div>
+          </section>
+        ) : (
+          <AuthPanel objects={objects} onShotCreated={onShotCreated} />
+        )}
       </div>
 
       <div className={styles.astroBaseLayout}>

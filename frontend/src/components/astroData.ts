@@ -1,9 +1,11 @@
 import type { AstroShot, ObjectFilterOption } from './types'
+import { withBasePath } from '../lib/config'
 
 export const DEEP_SKY_ID = 10
 export const EARTH_ID = 3
 export const MOON_ID = 9
 export const EARTH_SYSTEM_IDS = [EARTH_ID, MOON_ID] as const
+const texturePath = (fileName: string) => withBasePath(`textures/${fileName}`)
 
 export const OBJECT_NAMES: Record<number, string> = {
   [DEEP_SKY_ID]: 'Deep Sky',
@@ -46,7 +48,7 @@ export const ASTRO_SHOTS: AstroShot[] = [
     title: 'Активные солнечные пятна',
     author: 'Алина К.',
     objectId: 0,
-    image: '/textures/2k_sun.jpg',
+    image: texturePath('2k_sun.jpg'),
     likes: 214,
     telescope: 'Sky-Watcher 200PDS',
     camera: 'ZWO ASI585MC',
@@ -59,7 +61,7 @@ export const ASTRO_SHOTS: AstroShot[] = [
     title: 'Фаза Венеры на закате',
     author: 'Никита Р.',
     objectId: 2,
-    image: '/textures/2k_venus_atmosphere.jpg',
+    image: texturePath('2k_venus_atmosphere.jpg'),
     likes: 167,
     telescope: 'Celestron C8',
     camera: 'Canon EOS 90D',
@@ -72,7 +74,7 @@ export const ASTRO_SHOTS: AstroShot[] = [
     title: 'Марс в противостоянии',
     author: 'Влад С.',
     objectId: 4,
-    image: '/textures/2k_mars.jpg',
+    image: texturePath('2k_mars.jpg'),
     likes: 302,
     telescope: 'Meade LX90 8"',
     camera: 'ASI462MC',
@@ -85,7 +87,7 @@ export const ASTRO_SHOTS: AstroShot[] = [
     title: 'Полосы Юпитера крупным планом',
     author: 'Игорь Л.',
     objectId: 5,
-    image: '/textures/2k_jupiter.jpg',
+    image: texturePath('2k_jupiter.jpg'),
     likes: 426,
     telescope: 'Dobsonian 300/1500',
     camera: 'Player One Neptune-C II',
@@ -98,7 +100,7 @@ export const ASTRO_SHOTS: AstroShot[] = [
     title: 'Кольца Сатурна',
     author: 'Елена Т.',
     objectId: 6,
-    image: '/textures/2k_saturn.jpg',
+    image: texturePath('2k_saturn.jpg'),
     likes: 358,
     telescope: 'Sky-Watcher 250P',
     camera: 'Nikon Z6 II',
@@ -111,7 +113,7 @@ export const ASTRO_SHOTS: AstroShot[] = [
     title: 'Голубой диск Нептуна',
     author: 'Саша М.',
     objectId: 8,
-    image: '/textures/2k_neptune.jpg',
+    image: texturePath('2k_neptune.jpg'),
     likes: 141,
     telescope: 'Maksutov 180',
     camera: 'ASI678MC',
@@ -124,7 +126,7 @@ export const ASTRO_SHOTS: AstroShot[] = [
     title: 'Уран в холодных тонах',
     author: 'Денис П.',
     objectId: 7,
-    image: '/textures/2k_uranus.jpg',
+    image: texturePath('2k_uranus.jpg'),
     likes: 120,
     telescope: 'Celestron EdgeHD 9.25',
     camera: 'QHY5III715C',
@@ -137,7 +139,7 @@ export const ASTRO_SHOTS: AstroShot[] = [
     title: 'Текстуры Меркурия',
     author: 'Марина Ф.',
     objectId: 1,
-    image: '/textures/2k_mercury.jpg',
+    image: texturePath('2k_mercury.jpg'),
     likes: 95,
     telescope: 'Explore Scientific 127ED',
     camera: 'Sony A7 III',
@@ -150,7 +152,7 @@ export const ASTRO_SHOTS: AstroShot[] = [
     title: 'Облачные фронты Земли',
     author: 'Олег Н.',
     objectId: EARTH_ID,
-    image: '/textures/2k_earth_daymap.jpg',
+    image: texturePath('2k_earth_daymap.jpg'),
     likes: 289,
     telescope: 'Samyang 135mm',
     camera: 'Canon EOS R6',
@@ -163,7 +165,7 @@ export const ASTRO_SHOTS: AstroShot[] = [
     title: 'Глубокое небо Млечного Пути',
     author: 'Анна В.',
     objectId: DEEP_SKY_ID,
-    image: '/textures/8k_stars_milky_way.jpg',
+    image: texturePath('8k_stars_milky_way.jpg'),
     likes: 511,
     telescope: 'RedCat 51',
     camera: 'ASI2600MC Pro',
@@ -176,7 +178,7 @@ export const ASTRO_SHOTS: AstroShot[] = [
     title: 'Лунные кратеры на терминаторе',
     author: 'Роман Г.',
     objectId: MOON_ID,
-    image: '/textures/2k_moon.jpg',
+    image: texturePath('2k_moon.jpg'),
     likes: 274,
     telescope: 'Orion XT8',
     camera: 'ASI224MC',

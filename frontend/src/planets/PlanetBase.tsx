@@ -2,10 +2,12 @@ import { animated, SpringValue } from "@react-spring/three"
 import { useFrame, useLoader, useThree, type ThreeEvent } from "@react-three/fiber"
 import { useEffect, useRef, type Dispatch, type RefObject, type SetStateAction } from "react";
 import { DoubleSide, SRGBColorSpace, TextureLoader, type Mesh, type Texture } from "three";
+import { withBasePath } from "../lib/config";
 
-const EARTH_NORMAL_MAP_PATH = '/textures/2k_earth_normal_map.png'
-const EARTH_SPECULAR_MAP_PATH = '/textures/2k_earth_specular_map.jpg'
-const EARTH_CLOUDS_MAP_PATH = '/textures/2k_earth_clouds.jpg'
+const EARTH_NORMAL_MAP_PATH = withBasePath('textures/2k_earth_normal_map.png')
+const EARTH_SPECULAR_MAP_PATH = withBasePath('textures/2k_earth_specular_map.jpg')
+const EARTH_CLOUDS_MAP_PATH = withBasePath('textures/2k_earth_clouds.jpg')
+const SATURN_RING_MAP_PATH = withBasePath('textures/2k_saturn_ring_alpha.png')
 
 function configureTexture(texture: Texture, maxAnisotropy: number, colorSpace?: Texture['colorSpace']) {
     if (colorSpace) {
@@ -88,7 +90,7 @@ const EarthClouds = () => {
 export const Planet = ({texture_path, hasRing, isStar, position, meshRef, ringRef, scale, setHover, onSelect}: PlanetBaseProps) => {
     const { gl } = useThree()
     const texture = useLoader(TextureLoader, texture_path)
-    const ringTexture = useLoader(TextureLoader, '/textures/2k_saturn_ring_alpha.png')
+    const ringTexture = useLoader(TextureLoader, SATURN_RING_MAP_PATH)
     const isEarth = texture_path.includes('earth')
 
     useEffect(() => {

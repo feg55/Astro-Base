@@ -1,6 +1,8 @@
 import type { AstroShot, CelestialObject, UserProfile, UserRole } from '../components/types'
+import { withBasePath } from './config'
 
-const API_BASE_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? 'http://127.0.0.1:8000'
+const API_BASE_URL = (import.meta.env.VITE_API_URL as string | undefined)?.replace(/\/$/, '')
+  || 'http://127.0.0.1:8000'
 const TOKEN_KEY = 'astro-base-token'
 
 type ApiUser = {
@@ -301,7 +303,9 @@ function mapObject(object: ApiCelestialObject): CelestialObject {
     type: object.type,
     parentId: object.parent_id,
     sortOrder: object.sort_order,
-    texturePath: object.texture_path,
+    texturePath: object.texture_path?.startsWith('/textures/')
+      ? withBasePath(object.texture_path)
+      : object.texture_path,
   }
 }
 
@@ -325,6 +329,10 @@ function mapShot(shot: ApiShot): AstroShot {
 function mapImageUrl(imageUrl: string): string {
   if (imageUrl.startsWith('/shots/')) {
     return `${API_BASE_URL}${imageUrl}`
+  }
+
+  if (imageUrl.startsWith('/textures/')) {
+    return withBasePath(imageUrl)
   }
 
   return imageUrl

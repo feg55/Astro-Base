@@ -8,6 +8,7 @@ import {
   loginUser,
   registerUser,
 } from '../lib/api'
+import { withBasePath } from '../lib/config'
 import styles from './AstroBase.module.css'
 import type { AstroShot, CelestialObject, UserProfile } from './types'
 
@@ -347,7 +348,7 @@ export function AuthPanel({ objects, onShotCreated }: AuthPanelProps) {
             <>
               {profile.role === 'admin' && (
                 <>
-                  <a className={styles.textButton} href="/admin">
+                  <a className={styles.textButton} href={withBasePath('admin')}>
                     админ
                   </a>
                   <span aria-hidden="true">/</span>
