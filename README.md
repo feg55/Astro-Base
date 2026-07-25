@@ -1,6 +1,8 @@
 # Astro Base
 
-Astro Base — приложение с интерактивной 3D-сценой Солнечной системы и лентой астрофотографий.
+Astro Base - приложение с интерактивной 3D-сценой Солнечной системы и лентой астрофотографий.
+
+<img width="1280" height="720" alt="Timeline2_readme_hq" src="https://github.com/user-attachments/assets/59f16d65-defc-4b1c-8890-77b8e9bbfa64" />
 
 ## Структура
 
@@ -64,7 +66,7 @@ python -m app.seed
 python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-PostgreSQL доступен на `localhost:5433`, API — на `http://127.0.0.1:8000`.
+PostgreSQL доступен на `localhost:5433`, API - на `http://127.0.0.1:8000`.
 
 После `python -m app.seed` создаются тестовые аккаунты:
 
@@ -74,6 +76,8 @@ PostgreSQL доступен на `localhost:5433`, API — на `http://127.0.0.
 | Пользователь | `demo@astrobase.local` | `astro-demo-password` |
 
 ## Демо на GitHub Pages
+
+<img width="1280" height="720" alt="Timeline1_readme_hq" src="https://github.com/user-attachments/assets/ff581370-ef37-42d8-8e3a-61ffb1565ea9" />
 
 Workflow [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml) уже собирает содержимое `frontend/` и публикует его при push в `main`.
 
