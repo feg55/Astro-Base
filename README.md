@@ -2,6 +2,7 @@
   <strong>English</strong> |
   <a href="./README.ru.md">Русский</a>
 </p>
+
 # Astro Base
 
 Astro Base is an application with an interactive 3D scene of the Solar System and an astrophotography feed.
