@@ -1,6 +1,7 @@
 # Astro Base
 
 Astro Base - приложение с интерактивной 3D-сценой Солнечной системы и лентой астрофотографий.
+
 Demo site - https://feg55.github.io/Astro-Base/
 
 <img width="1280" height="720" alt="Timeline2_readme_hq" src="https://github.com/user-attachments/assets/59f16d65-defc-4b1c-8890-77b8e9bbfa64" />
