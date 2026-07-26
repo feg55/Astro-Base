@@ -170,11 +170,7 @@ python -m app.seed
 python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
-<<<<<<< HEAD
 #### Bash, macOS, or Linux
-=======
-PostgreSQL доступен на `localhost:5433`, API - на `http://127.0.0.1:8000`.
->>>>>>> c78737fadfadc0b0caa80f7667aa1b8707f10930
 
 ```bash
 cd backend
@@ -263,13 +259,7 @@ Running `python -m app.seed` creates local test accounts:
 > [!WARNING]
 > These credentials are intended only for local development. Do not use the test passwords in a public environment.
 
-<<<<<<< HEAD
 ## Frontend checks
-=======
-<img width="1280" height="720" alt="Timeline1_readme_hq" src="https://github.com/user-attachments/assets/ff581370-ef37-42d8-8e3a-61ffb1565ea9" />
-
-Workflow [.github/workflows/deploy-pages.yml](.github/workflows/deploy-pages.yml) уже собирает содержимое `frontend/` и публикует его при push в `main`.
->>>>>>> c78737fadfadc0b0caa80f7667aa1b8707f10930
 
 ```bash
 cd frontend
