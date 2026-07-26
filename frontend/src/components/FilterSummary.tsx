@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import styles from './AstroBase.module.css'
 
 type FilterSummaryProps = {
@@ -8,7 +9,7 @@ type FilterSummaryProps = {
   onResetFilters: () => void
 }
 
-export function FilterSummary({
+export const FilterSummary = memo(function FilterSummary({
   selectedObjectName,
   selectedPlanetId,
   checkedCount,
@@ -33,4 +34,4 @@ export function FilterSummary({
       )}
     </div>
   )
-}
+})

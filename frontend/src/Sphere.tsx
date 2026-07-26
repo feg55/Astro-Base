@@ -1,15 +1,16 @@
 /* eslint-disable react-refresh/only-export-components */
 import { useFrame } from '@react-three/fiber'
-import { useEffect, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Mesh } from 'three'
 import { useSpring } from "@react-spring/three";
 import { create } from 'zustand';
 import { Planet } from './planets/PlanetBase.tsx';
-import { useShallow } from 'zustand/shallow';
 import { withBasePath } from './lib/config.ts';
-import { planetMeshById } from './planets/runtimeState.ts';
+import { planetMeshById, selectedPlanetIdRef } from './planets/runtimeState.ts';
 
 const NOOP_RAYCAST: Mesh['raycast'] = () => {}
+const ORIGIN: [number, number, number] = [0, 0, 0]
+const PLANET_SPRING_CONFIG = { tension: 170, friction: 18 }
 
 const ORBIT_SCALE = 0.9
 const orbitPosition = (x: number, y = 0, z = 0): [number, number, number] => [x * ORBIT_SCALE, y, z * ORBIT_SCALE]
@@ -117,38 +118,42 @@ type UsePlanetProps = {
   id?: number,
   name?: string
   onSelect?: (planetId: number) => void
-  selectedPlanetId?: number | null
 }
 
 export const usePlanet = (props: UsePlanetProps) => {
-  const {planets} = usePlanetsStore(useShallow(state => ({planets: state.planets})))
+  const { id, onSelect } = props
+  const planet = usePlanetsStore((state) => state.planets.find((item) => item.id === id))
   const meshRef = useRef<Mesh | null>(null)
   const ringRef = useRef<Mesh | null>(null)
-  const angleRef = useRef((props.id ?? 0) * 0.7)
+  const angleRef = useRef((id ?? 0) * 0.7)
 
-  const handleSelect = () => {
-    if (props.id === undefined || !props.onSelect) return
-    props.onSelect(props.id)
-  }
+  const handleSelect = useCallback(() => {
+    if (id === undefined || !onSelect) return
+    onSelect(id)
+  }, [id, onSelect])
 
   const [hovered, setHover] = useState(false)
-  const [active, setActive] = useState(false)
-  const planet = planets.find((el) => el.id === props.id)
   const baseScale = planet?.scale ?? 1
 
   const { scale } = useSpring({
-    scale: active ? baseScale * 2 : hovered ? baseScale * 1.1 : baseScale,
-    config: { tension: 170, friction: 18 },
+    scale: hovered ? baseScale * 1.1 : baseScale,
+    config: PLANET_SPRING_CONFIG,
   });
   
-  const start = planet?.position ?? [0, 0, 0]
-  const orbitRadius = Math.hypot(start[0], start[2])
-  const orbitSpeed = planet?.id === 0 ? 0 : 0.35 / Math.sqrt(Math.max(orbitRadius, 0.1))
+  const start = planet?.position ?? ORIGIN
+  const [orbitRadius, orbitSpeed] = useMemo(() => {
+    const radius = Math.hypot(start[0], start[2])
+    return [
+      radius,
+      planet?.id === 0 ? 0 : 0.35 / Math.sqrt(Math.max(radius, 0.1)),
+    ]
+  }, [planet?.id, start])
 
   useFrame((_state, delta: number) => {
     if (!meshRef.current) return
 
-    const colliderEnabled = props.selectedPlanetId == null || props.id === props.selectedPlanetId
+    const selectedPlanetId = selectedPlanetIdRef.current
+    const colliderEnabled = selectedPlanetId === null || id === selectedPlanetId
     const raycastImpl = colliderEnabled ? Mesh.prototype.raycast : NOOP_RAYCAST
     if (meshRef.current.raycast !== raycastImpl) {
       meshRef.current.raycast = raycastImpl
@@ -157,9 +162,6 @@ export const usePlanet = (props: UsePlanetProps) => {
       ringRef.current.raycast = raycastImpl
     }
 
-    if (props.id !== undefined) {
-      planetMeshById.set(props.id, meshRef.current)
-    }
     meshRef.current.rotation.y += delta
 
     if (orbitRadius > 0) {
@@ -173,12 +175,16 @@ export const usePlanet = (props: UsePlanetProps) => {
   })
 
   useEffect(() => {
+    if (id !== undefined && meshRef.current) {
+      planetMeshById.set(id, meshRef.current)
+    }
+
     return () => {
-      if (props.id !== undefined) {
-        planetMeshById.delete(props.id)
+      if (id !== undefined) {
+        planetMeshById.delete(id)
       }
     }
-  }, [props.id])
+  }, [id])
 
   if (!planet) {
     return null
@@ -191,16 +197,22 @@ export const usePlanet = (props: UsePlanetProps) => {
       scale={scale}
       meshRef={meshRef}
       ringRef={ringRef}
-      hovered={hovered}
-      active={active}
       setHover={setHover}
-      setActive={setActive}
       onSelect={handleSelect}
       hasRing={planet.hasRing ?? false}
       isStar={planet.isStar ?? false}
     />
   )
 }
+
+type PlanetNodeProps = {
+  id: number
+  onSelectPlanet: (planetId: number) => void
+}
+
+export const PlanetNode = memo(function PlanetNode({ id, onSelectPlanet }: PlanetNodeProps) {
+  return usePlanet({ id, onSelect: onSelectPlanet })
+})
 
 
 // export function SphereMesh(props: ThreeElements['mesh']) {

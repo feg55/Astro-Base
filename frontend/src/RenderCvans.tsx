@@ -1,7 +1,8 @@
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { usePlanet, usePlanetsStore } from './Sphere.tsx'
+import { memo, Suspense, useEffect, useMemo, type CSSProperties } from 'react'
+import { PlanetNode, usePlanetsStore } from './Sphere.tsx'
 import SkySphere from './planets/SkySphere.tsx'
-import { planetMeshById } from './planets/runtimeState.ts'
+import { planetMeshById, selectedPlanetIdRef } from './planets/runtimeState.ts'
 
 // const positione = [0, 20, 1] as const
 type CamPosT = [number, number, number]
@@ -10,10 +11,32 @@ const CAMERA_DISTANCE_SCALE = 1.2
 const CAMERA_FOV = 40
 const CAMERA_NEAR = 0.01
 const CAMERA_FAR = 2000
+const PLANET_IDS = [0, 1, 2, 3, 4, 5, 6, 7, 8] as const
+const BACKGROUND_COLOR_ARGS: [string] = ['#01030a']
+const CANVAS_STYLE: CSSProperties = {
+  position: 'relative',
+  inset: 0,
+  width: '100%',
+  height: '100%',
+}
+const CAMERA_CONFIG = {
+  position: START_POS,
+  fov: CAMERA_FOV,
+  near: CAMERA_NEAR,
+  far: CAMERA_FAR,
+}
 
 function SimpleCamera({ targetId }: { targetId: number | null }) {
-  const { camera } = useThree()
+  const camera = useThree((state) => state.camera)
   const planets = usePlanetsStore((state) => state.planets)
+  const scaleByPlanetId = useMemo(
+    () => new Map(planets.map((planet) => [planet.id, planet.scale])),
+    [planets],
+  )
+
+  useEffect(() => {
+    selectedPlanetIdRef.current = targetId
+  }, [targetId])
   
   useFrame(() => {
     const k = 0.08
@@ -31,7 +54,7 @@ function SimpleCamera({ targetId }: { targetId: number | null }) {
     const targetMesh = planetMeshById.get(targetId)
     if (!targetMesh) return
 
-    const planetScale = planets.find((p) => p.id === targetId)?.scale ?? 1
+    const planetScale = scaleByPlanetId.get(targetId) ?? 1
     const followDistance = Math.max(0.8, planetScale * 2.2) * CAMERA_DISTANCE_SCALE
     const upDistance = Math.max(0.4, planetScale * 0.9) * CAMERA_DISTANCE_SCALE
     const { x, y, z } = targetMesh.position
@@ -72,56 +95,81 @@ function SimpleCamera({ targetId }: { targetId: number | null }) {
   return null
 }
 
+function CanvasVisibilityController() {
+  const gl = useThree((state) => state.gl)
+  const invalidate = useThree((state) => state.invalidate)
+  const setFrameloop = useThree((state) => state.setFrameloop)
 
-const CustomPlanets = ({ onSelectPlanet, selectedPlanetId }: { onSelectPlanet: (planetId: number) => void, selectedPlanetId: number | null }) => {
-  const Sun = usePlanet({id: 0, onSelect: onSelectPlanet, selectedPlanetId})
-  const Mercury = usePlanet({id: 1, onSelect: onSelectPlanet, selectedPlanetId})
-  const Venus = usePlanet({id:2, onSelect: onSelectPlanet, selectedPlanetId})
-  const Earth = usePlanet({id: 3, onSelect: onSelectPlanet, selectedPlanetId})
-  const Mars = usePlanet({id: 4, onSelect: onSelectPlanet, selectedPlanetId})
-  const Jupiter = usePlanet({id: 5, onSelect: onSelectPlanet, selectedPlanetId})
-  const Saturn = usePlanet({id: 6, onSelect: onSelectPlanet, selectedPlanetId})
-  const Uranus = usePlanet({id: 7, onSelect: onSelectPlanet, selectedPlanetId})
-  const Neptune = usePlanet({id: 8, onSelect: onSelectPlanet, selectedPlanetId})
+  useEffect(() => {
+    const canvas = gl.domElement
+    let isInViewport = true
+
+    const syncFrameloop = () => {
+      const shouldAnimate = isInViewport && document.visibilityState !== 'hidden'
+      setFrameloop(shouldAnimate ? 'always' : 'never')
+
+      if (shouldAnimate) {
+        invalidate()
+      }
+    }
+
+    const observer = new IntersectionObserver(([entry]) => {
+      isInViewport = entry?.isIntersecting ?? true
+      syncFrameloop()
+    })
+
+    observer.observe(canvas)
+    document.addEventListener('visibilitychange', syncFrameloop)
+
+    return () => {
+      observer.disconnect()
+      document.removeEventListener('visibilitychange', syncFrameloop)
+    }
+  }, [gl, invalidate, setFrameloop])
+
+  return null
+}
+
+const CustomPlanets = memo(function CustomPlanets({
+  onSelectPlanet,
+}: {
+  onSelectPlanet: (planetId: number) => void
+}) {
   return (
     <>
-      {Sun}
-      {Mercury}
-      {Venus}
-      {Earth}
-      {Mars}
-      {Jupiter}
-      {Saturn}
-      {Uranus}
-      {Neptune}
+      {PLANET_IDS.map((planetId) => (
+        <Suspense key={planetId} fallback={null}>
+          <PlanetNode id={planetId} onSelectPlanet={onSelectPlanet} />
+        </Suspense>
+      ))}
     </>
   )
-}
+})
 
 type RenderCvansProps = {
   selectedPlanetId: number | null
   onSelectPlanet: (planetId: number) => void
 }
 
-export default function RenderCvans({ selectedPlanetId, onSelectPlanet }: RenderCvansProps) {
-
+const RenderCvans = memo(function RenderCvans({ selectedPlanetId, onSelectPlanet }: RenderCvansProps) {
   return (
     <Canvas
-      camera={{
-        position: START_POS,
-        fov: CAMERA_FOV,
-        near: CAMERA_NEAR,
-        far: CAMERA_FAR,
-      }}
-      style={{ position: 'relative', inset: 0, width: '100%', height: '100%' }}
+      camera={CAMERA_CONFIG}
+      style={CANVAS_STYLE}
     >
       {/* <ambientLight intensity={Math.PI / 20} /> */}
+      <CanvasVisibilityController />
       <SimpleCamera targetId={selectedPlanetId} />
       {/* <spotLight position={[0, 20, 0]} angle={0.25} penumbra={1} decay={0} intensity={Math.PI * 0.1} /> */}
       <pointLight position={[0, 0, 0]} decay={0} intensity={Math.PI} />
-      <SkySphere />
-      <CustomPlanets onSelectPlanet={onSelectPlanet} selectedPlanetId={selectedPlanetId}/>
+      <color attach="background" args={BACKGROUND_COLOR_ARGS} />
+      <Suspense fallback={null}>
+        <SkySphere />
+      </Suspense>
+      <CustomPlanets onSelectPlanet={onSelectPlanet} />
       {/* <SphereMesh position={[0, 0, 0]} /> */}
     </Canvas>
   )
-}
+})
+
+export default RenderCvans

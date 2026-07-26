@@ -1,4 +1,4 @@
-import { type ChangeEvent, type DragEvent, type FormEvent, useEffect, useState } from 'react'
+import { memo, type ChangeEvent, type DragEvent, type FormEvent, useEffect, useMemo, useState } from 'react'
 import {
   ApiError,
   clearAuthToken,
@@ -98,7 +98,7 @@ function createEmptyShotDraft(defaultObjectId: number | null): ShotDraft {
   }
 }
 
-export function AuthPanel({ objects, onShotCreated }: AuthPanelProps) {
+export const AuthPanel = memo(function AuthPanel({ objects, onShotCreated }: AuthPanelProps) {
   const [profile, setProfile] = useState<UserProfile>(() => getInitialProfile())
   const [mode, setMode] = useState<AuthMode>('login')
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -116,7 +116,10 @@ export function AuthPanel({ objects, onShotCreated }: AuthPanelProps) {
 
   const isGuest = profile.role === 'guest'
   const isRegister = mode === 'register'
-  const objectOptions = [...objects].sort((left, right) => left.sortOrder - right.sortOrder)
+  const objectOptions = useMemo(
+    () => [...objects].sort((left, right) => left.sortOrder - right.sortOrder),
+    [objects],
+  )
   const defaultObjectId = objectOptions[0]?.id ?? null
 
   useEffect(() => {
@@ -608,4 +611,4 @@ export function AuthPanel({ objects, onShotCreated }: AuthPanelProps) {
       )}
     </>
   )
-}
+})

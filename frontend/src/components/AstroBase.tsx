@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { AuthPanel } from './AuthPanel'
 import { FilterSummary } from './FilterSummary'
 import { FiltersSidebar } from './FiltersSidebar'
@@ -29,7 +30,72 @@ type AstroBaseProps = {
   onToggleObjectFilter: (objectId: number) => void
 }
 
-export function AstroBase({
+type AstroHeaderProps = Pick<
+  AstroBaseProps,
+  'isDemoMode' | 'objects' | 'onShotCreated'
+>
+
+const AstroHeader = memo(function AstroHeader({
+  isDemoMode,
+  objects,
+  onShotCreated,
+}: AstroHeaderProps) {
+  return (
+    <div className={styles.astroBaseTop}>
+      <div className={styles.topCopy}>
+        <p className={styles.astroBaseLabel}>Astro Base</p>
+        <h1>Лента астрофото</h1>
+        <p className={styles.astroBaseDescription}>
+          Снимки сообщества, быстрый поиск и фильтры по объектам Солнечной системы.
+        </p>
+      </div>
+
+      {isDemoMode ? (
+        <section className={styles.accountPanel} aria-label="Режим приложения">
+          <div className={styles.accountIdentity}>
+            <strong>Демо-режим</strong>
+            <span>Статическая версия без backend</span>
+          </div>
+        </section>
+      ) : (
+        <AuthPanel objects={objects} onShotCreated={onShotCreated} />
+      )}
+    </div>
+  )
+})
+
+type ShotsFeedProps = Pick<
+  AstroBaseProps,
+  'apiError' | 'filteredShots' | 'isLoadingShots' | 'onOpenShot'
+>
+
+const ShotsFeed = memo(function ShotsFeed({
+  apiError,
+  filteredShots,
+  isLoadingShots,
+  onOpenShot,
+}: ShotsFeedProps) {
+  return (
+    <>
+      {apiError && <p className={styles.statusMessage}>{apiError}</p>}
+      {isLoadingShots && <p className={styles.statusMessage}>Загружаем снимки...</p>}
+
+      <div className={styles.shotsGrid}>
+        {filteredShots.map((shot) => (
+          <ShotCard key={shot.id} shot={shot} onOpen={onOpenShot} />
+        ))}
+      </div>
+
+      {filteredShots.length === 0 && (
+        <p className={styles.emptyState}>
+          По текущим фильтрам ничего не найдено. Попробуйте ослабить ограничения.
+        </p>
+      )}
+    </>
+  )
+})
+
+export const AstroBase = memo(function AstroBase({
   apiError,
   checkedObjectIds,
   checkedObjectsSet,
@@ -53,26 +119,11 @@ export function AstroBase({
 }: AstroBaseProps) {
   return (
     <section className={styles.astroBaseSection}>
-      <div className={styles.astroBaseTop}>
-        <div className={styles.topCopy}>
-          <p className={styles.astroBaseLabel}>Astro Base</p>
-          <h1>Лента астрофото</h1>
-          <p className={styles.astroBaseDescription}>
-            Снимки сообщества, быстрый поиск и фильтры по объектам Солнечной системы.
-          </p>
-        </div>
-
-        {isDemoMode ? (
-          <section className={styles.accountPanel} aria-label="Режим приложения">
-            <div className={styles.accountIdentity}>
-              <strong>Демо-режим</strong>
-              <span>Статическая версия без backend</span>
-            </div>
-          </section>
-        ) : (
-          <AuthPanel objects={objects} onShotCreated={onShotCreated} />
-        )}
-      </div>
+      <AstroHeader
+        isDemoMode={isDemoMode}
+        objects={objects}
+        onShotCreated={onShotCreated}
+      />
 
       <div className={styles.astroBaseLayout}>
         <div className={styles.astroFeedColumn}>
@@ -84,20 +135,12 @@ export function AstroBase({
             onResetFilters={onResetFilters}
           />
 
-          {apiError && <p className={styles.statusMessage}>{apiError}</p>}
-          {isLoadingShots && <p className={styles.statusMessage}>Загружаем снимки...</p>}
-
-          <div className={styles.shotsGrid}>
-            {filteredShots.map((shot) => (
-              <ShotCard key={shot.id} shot={shot} onOpen={onOpenShot} />
-            ))}
-          </div>
-
-          {filteredShots.length === 0 && (
-            <p className={styles.emptyState}>
-              По текущим фильтрам ничего не найдено. Попробуйте ослабить ограничения.
-            </p>
-          )}
+          <ShotsFeed
+            apiError={apiError}
+            filteredShots={filteredShots}
+            isLoadingShots={isLoadingShots}
+            onOpenShot={onOpenShot}
+          />
         </div>
 
         <FiltersSidebar
@@ -115,4 +158,4 @@ export function AstroBase({
       {openedShot && <ShotModal shot={openedShot} onClose={onCloseShot} />}
     </section>
   )
-}
+})

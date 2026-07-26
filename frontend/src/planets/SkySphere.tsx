@@ -1,5 +1,5 @@
 import { useLoader, useThree } from "@react-three/fiber";
-import { useEffect } from "react";
+import { memo, useEffect } from "react";
 import {
   EquirectangularReflectionMapping,
   SRGBColorSpace,
@@ -23,14 +23,19 @@ function configureStarsBackground(scene: Scene, stars: Texture, maxAnisotropy: n
       }
 }
 
-const SkySphere = () => {
-    const { gl, scene } = useThree()
-    const stars = useLoader(TextureLoader, withBasePath('textures/8k_stars_milky_way.jpg'))
+const STARS_TEXTURE_PATH = withBasePath('textures/8k_stars_milky_way.jpg')
+
+useLoader.preload(TextureLoader, STARS_TEXTURE_PATH)
+
+const SkySphere = memo(function SkySphere() {
+    const gl = useThree((state) => state.gl)
+    const scene = useThree((state) => state.scene)
+    const stars = useLoader(TextureLoader, STARS_TEXTURE_PATH)
 
     useEffect(() => {
       return configureStarsBackground(scene, stars, Math.max(1, gl.capabilities.getMaxAnisotropy()))
     }, [gl, scene, stars])
 
     return null
-}
+})
 export default SkySphere

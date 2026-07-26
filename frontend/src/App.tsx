@@ -1,4 +1,4 @@
-import { Suspense, lazy, useEffect, useMemo, useState } from 'react'
+import { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react'
 import styles from './App.module.css'
 import { AstroBase } from './components/AstroBase'
 import {
@@ -177,7 +177,7 @@ function MainApp() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [openedShotId])
 
-  const handlePlanetSelect = (planetId: number) => {
+  const handlePlanetSelect = useCallback((planetId: number) => {
     setSelectedPlanetId((prev) => (prev === planetId ? null : planetId))
     setCheckedObjectIds((prev) => {
       const next = new Set(prev)
@@ -202,17 +202,17 @@ function MainApp() {
 
       return Array.from(next)
     })
-  }
+  }, [])
 
-  const toggleObjectFilter = (objectId: number) => {
+  const toggleObjectFilter = useCallback((objectId: number) => {
     setCheckedObjectIds((prev) => (
       prev.includes(objectId)
         ? prev.filter((id) => id !== objectId)
         : [...prev, objectId]
     ))
-  }
+  }, [])
 
-  const toggleGroupFilter = (childrenIds: number[]) => {
+  const toggleGroupFilter = useCallback((childrenIds: number[]) => {
     setCheckedObjectIds((prev) => {
       const next = new Set(prev)
       const isGroupFullySelected = childrenIds.every((id) => next.has(id))
@@ -225,27 +225,37 @@ function MainApp() {
 
       return Array.from(next)
     })
-  }
+  }, [])
 
-  const resetAllFilters = () => {
+  const resetAllFilters = useCallback(() => {
     setSelectedPlanetId(null)
     setCheckedObjectIds([])
     setSearchQuery('')
-  }
+  }, [])
 
-  const handleShotCreated = (shot: AstroShot) => {
+  const handleShotCreated = useCallback((shot: AstroShot) => {
     setShotsRevision((prev) => prev + 1)
     setOpenedShotId(shot.id)
-  }
+  }, [])
 
-  const selectedObjectName = selectedPlanetId === null
-    ? 'Все объекты'
-    : objectNames.get(selectedPlanetId) ?? getObjectName(selectedPlanetId)
+  const handleCloseShot = useCallback(() => setOpenedShotId(null), [])
+  const handleOpenShot = useCallback((shotId: number) => setOpenedShotId(shotId), [])
+  const handleSearchQueryChange = useCallback((query: string) => setSearchQuery(query), [])
 
-  const hasActiveFilters = (
-    selectedPlanetId !== null ||
-    checkedObjectIds.length > 0 ||
-    searchQuery.trim().length > 0
+  const selectedObjectName = useMemo(
+    () => selectedPlanetId === null
+      ? 'Все объекты'
+      : objectNames.get(selectedPlanetId) ?? getObjectName(selectedPlanetId),
+    [objectNames, selectedPlanetId],
+  )
+
+  const hasActiveFilters = useMemo(
+    () => (
+      selectedPlanetId !== null ||
+      checkedObjectIds.length > 0 ||
+      searchQuery.trim().length > 0
+    ),
+    [checkedObjectIds.length, searchQuery, selectedPlanetId],
   )
 
   return (
@@ -268,11 +278,11 @@ function MainApp() {
         searchQuery={searchQuery}
         selectedObjectName={selectedObjectName}
         selectedPlanetId={selectedPlanetId}
-        onCloseShot={() => setOpenedShotId(null)}
+        onCloseShot={handleCloseShot}
         onShotCreated={handleShotCreated}
-        onOpenShot={setOpenedShotId}
+        onOpenShot={handleOpenShot}
         onResetFilters={resetAllFilters}
-        onSearchQueryChange={setSearchQuery}
+        onSearchQueryChange={handleSearchQueryChange}
         onToggleGroupFilter={toggleGroupFilter}
         onToggleObjectFilter={toggleObjectFilter}
       />

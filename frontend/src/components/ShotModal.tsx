@@ -1,3 +1,4 @@
+import { memo, useCallback, type MouseEvent } from 'react'
 import { getObjectName } from './astroData'
 import styles from './AstroBase.module.css'
 import type { AstroShot } from './types'
@@ -7,8 +8,11 @@ type ShotModalProps = {
   onClose: () => void
 }
 
-export function ShotModal({ shot, onClose }: ShotModalProps) {
+export const ShotModal = memo(function ShotModal({ shot, onClose }: ShotModalProps) {
   const objectName = shot.objectName ?? getObjectName(shot.objectId)
+  const stopPropagation = useCallback((event: MouseEvent<HTMLDivElement>) => {
+    event.stopPropagation()
+  }, [])
 
   return (
     <div className={styles.shotModalBackdrop} role="presentation" onClick={onClose}>
@@ -17,7 +21,7 @@ export function ShotModal({ shot, onClose }: ShotModalProps) {
         role="dialog"
         aria-modal="true"
         aria-label={shot.title}
-        onClick={(event) => event.stopPropagation()}
+        onClick={stopPropagation}
       >
         <div className={styles.shotModalMedia}>
           <img className={styles.shotModalImage} src={shot.image} alt={shot.title} />
@@ -52,4 +56,4 @@ export function ShotModal({ shot, onClose }: ShotModalProps) {
       </div>
     </div>
   )
-}
+})

@@ -1,3 +1,4 @@
+import { memo, useCallback } from 'react'
 import { getObjectName } from './astroData'
 import styles from './AstroBase.module.css'
 import type { AstroShot } from './types'
@@ -7,13 +8,20 @@ type ShotCardProps = {
   onOpen: (shotId: number) => void
 }
 
-export function ShotCard({ shot, onOpen }: ShotCardProps) {
+export const ShotCard = memo(function ShotCard({ shot, onOpen }: ShotCardProps) {
   const objectName = shot.objectName ?? getObjectName(shot.objectId)
+  const handleOpen = useCallback(() => onOpen(shot.id), [onOpen, shot.id])
 
   return (
     <article className={styles.shotCard}>
-      <button type="button" className={styles.shotCardButton} onClick={() => onOpen(shot.id)}>
-        <img className={styles.shotImage} src={shot.image} alt={shot.title} loading="lazy" />
+      <button type="button" className={styles.shotCardButton} onClick={handleOpen}>
+        <img
+          className={styles.shotImage}
+          src={shot.image}
+          alt={shot.title}
+          loading="lazy"
+          decoding="async"
+        />
 
         <div className={styles.shotInfo}>
           <div>
@@ -36,4 +44,4 @@ export function ShotCard({ shot, onOpen }: ShotCardProps) {
       </button>
     </article>
   )
-}
+})
